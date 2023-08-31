@@ -20,6 +20,11 @@ def read_config(project):
     """
     config = configparser.ConfigParser()
     config.read(config_file_path)
+
+    if config.has_section(project) == False:
+        print(f'Error: Project "{project}" does not exist.')
+        sys.exit(1)
+
     return config[project]['project_root'], config[project]['loco_key']
 
 
@@ -31,8 +36,6 @@ def update_loco(path, key):
     """
     archive_url = f'https://localise.biz/api/export/archive/strings.zip?filter=ios&fallback=en&charset=utf8&key={key}'
     archive_path = download_archive(archive_url)
-    if archive_path is None:
-        return
 
     print("String resources downloaded successfully.")
 
@@ -65,7 +68,7 @@ def download_archive(endpoint):
     response = requests.get(endpoint)
     if response.status_code != 200:
         print(f'Error: Loco returned status code {response.status_code}.')
-        return None
+        sys.exit(1)
 
     os.makedirs(tmp_folder, exist_ok=True)
 
@@ -77,6 +80,10 @@ def download_archive(endpoint):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print('Error: Import Loco requires 1 argument.\n$ import_loco {project_name}')
+        sys.exit(1)
+
     project_name = sys.argv[1]
     project_path, loco_key = read_config(project_name)
     update_loco(project_path, loco_key)
