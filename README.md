@@ -40,6 +40,30 @@ You can create an alias in your `.bashrc` to make life easier.
 alias import_loco="python3 path_to_script/importLoco/main.py"
 ```
 
+## One more thing
+
+If you are a cool guy, you can use a Raycast script.
+
+```bash
+#!/bin/bash
+
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title Import Loco
+# @raycast.mode compact
+
+# Optional parameters:
+# @raycast.icon 🌐
+# @raycast.argument1 { "type": "text", "placeholder": "kmail" }
+
+# Documentation:
+# @raycast.description Import Loco strings
+# @raycast.author valentinperignon
+# @raycast.authorURL https://raycast.com/valentinperignon
+
+python3 path_to_script/importLoco/main.py $1
+```
+
 ---
 
 Fin ! The End! Fine! Fin! Ende!

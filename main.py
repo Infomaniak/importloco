@@ -2,7 +2,6 @@ import configparser
 import os
 import shutil
 import zipfile
-
 import requests
 import sys
 
