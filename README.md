@@ -4,11 +4,18 @@ Import strings like a noob.
 
 Designed by ~~Apple~~ iOS team in ~~California~~ Geneva. Inspired by [Ink](https://github.com/LunarX/ink_utils).
 
-## How to use
+## Install the script
+
+### Python dependencies
+
+Import Loco requires one dependency.
+```bash
+$ pip3 install requests=2.28.2
+```
 
 ### Configuration file
 
-Import Loco requires a configuration file to set up your projects.
+Import Loco needs a configuration file to set up your projects.
 You need to create a file in your home directory with the name `.import_loco`.
 ```bash
 $ touch ~/.import_loco
@@ -20,9 +27,10 @@ project_root = /Users/.../project/Localizable
 loco_key = xxx
 ```
 
-### Execute the script
+## Execute the script
 
-To run the script, simply execute the following line in a terminal:
+To run the script, simply execute the following line in a terminal.
+The project name corresponds to the one you added in the `.import_loco` file.
 ```bash
 $ python3 path_to_script/importLoco/main.py {project_name} 
 ```
