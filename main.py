@@ -8,7 +8,7 @@ import sys
 
 # Config
 config_file_path = os.path.expanduser('~/.import_loco')
-tmp_folder = '/tmp/loco_import'
+tmp_folder = '/tmp/import_loco'
 loco_archive_name = 'strings.zip'
 languages = ['de', 'en', 'es', 'fr', 'it']
 
