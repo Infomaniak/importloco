@@ -33,7 +33,7 @@ def update_loco(path, key):
     :param path: absolute path to project strings
     :param key: loco api key
     """
-    archive_url = f'https://localise.biz/api/export/archive/strings.zip?filter=ios&fallback=en&charset=utf8&key={key}'
+    archive_url = f'https://localise.biz/api/export/archive/strings.zip?filter=ios&fallback=en&order=id&charset=utf8&key={key}'
     archive_path = download_archive(archive_url)
 
     print("String resources downloaded successfully.")

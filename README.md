@@ -10,7 +10,7 @@ Designed by ~~Apple~~ iOS team in ~~California~~ Geneva. Inspired by [Ink](https
 
 Import Loco requires one dependency.
 ```bash
-$ pip3 install requests=2.28.2
+$ pip3 install requests==2.28.2
 ```
 
 ### Configuration file
