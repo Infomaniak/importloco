@@ -1,15 +1,18 @@
 import configparser
+import loco_validator.validator as loco_validator
 import os
-import shutil
-import zipfile
+import re
 import requests
+import shutil
 import sys
+import zipfile
 
 # Config
 config_file_path = os.path.expanduser('~/.import_loco')
 tmp_folder = '/tmp/import_loco'
 loco_archive_name = 'strings.zip'
 languages = ['de', 'en', 'es', 'fr', 'it']
+language_file = 'Localizable.strings'
 
 
 def read_config(project):
@@ -20,7 +23,7 @@ def read_config(project):
     config = configparser.ConfigParser()
     config.read(config_file_path)
 
-    if config.has_section(project) == False:
+    if not config.has_section(project):
         print(f'Error: Project "{project}" does not exist.')
         sys.exit(1)
 
@@ -46,7 +49,6 @@ def update_loco(path, key):
 
     for language in languages:
         language_folder = f'{language}.lproj'
-        language_file = 'Localizable.strings'
 
         source_file = f'{tmp_folder}/{loco_folder}/{language_folder}/{language_file}'
         target_file = f'{path}/{language_folder}/{language_file}'
@@ -78,6 +80,30 @@ def download_archive(endpoint):
     return archive_path
 
 
+def validate_strings(path):
+    for language in languages:
+        language_folder = f'{language}.lproj'
+        localizable_strings = parse_strings_file(f'{path}/{language_folder}/{language_file}')
+
+        error_count = 0
+        for key, value in localizable_strings.items():
+            error_count += loco_validator.validate_string(language, key, value)
+
+    return error_count
+
+
+def parse_strings_file(filename):
+    data = {}
+    with open(filename, 'r', encoding='utf-8') as strings_file:
+        for line in strings_file:
+            if '=' in line:
+                key, value = [re.sub(r'^"|";?$', '', item.strip()) for item in line.split('=')]
+                value = value.replace('\"', '"')
+                data[key] = value
+
+    return data
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('Error: Import Loco requires 1 argument.\n$ import_loco {project_name}')
@@ -85,4 +111,5 @@ if __name__ == '__main__':
 
     project_name = sys.argv[1]
     project_path, loco_key = read_config(project_name)
-    update_loco(project_path, loco_key)
+    #update_loco(project_path, loco_key)
+    validate_strings(project_path)
