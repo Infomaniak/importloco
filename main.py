@@ -81,11 +81,11 @@ def download_archive(endpoint):
 
 
 def validate_strings(path):
+    error_count = 0
     for language in languages:
         language_folder = f'{language}.lproj'
         localizable_strings = parse_strings_file(f'{path}/{language_folder}/{language_file}')
 
-        error_count = 0
         for key, value in localizable_strings.items():
             error_count += loco_validator.validate_string(language, key, value)
 
@@ -112,4 +112,11 @@ if __name__ == '__main__':
     project_name = sys.argv[1]
     project_path, loco_key = read_config(project_name)
     #update_loco(project_path, loco_key)
-    validate_strings(project_path)
+    error_count = validate_strings(project_path)
+
+    if error_count > 0:
+        plural = 's' if error_count > 1 else ''
+        print(f'{error_count} error{plural} found in translations')
+        sys.exit(2)
+
+    print('Translations successfully updated')
