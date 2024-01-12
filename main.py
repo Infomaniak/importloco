@@ -54,10 +54,8 @@ def update_loco(path, key):
         target_file = f'{path}/{language_folder}/{language_file}'
         shutil.copy(source_file, target_file)
 
-    print('String resources updated.')
-
     shutil.rmtree(tmp_folder)
-    print("The End. That's all folks!")
+    print('String resources updated.\n')
 
 
 def download_archive(endpoint):
@@ -111,7 +109,7 @@ if __name__ == '__main__':
 
     project_name = sys.argv[1]
     project_path, loco_key = read_config(project_name)
-    #update_loco(project_path, loco_key)
+    update_loco(project_path, loco_key)
     error_count = validate_strings(project_path)
 
     if error_count > 0:
@@ -119,4 +117,4 @@ if __name__ == '__main__':
         print(f'{error_count} error{plural} found in translations')
         sys.exit(2)
 
-    print('Translations successfully updated')
+    print('Translations successfully updated. The End. That\'s all folks!')

@@ -2,7 +2,7 @@
 
 Import strings like a noob.
 
-Designed by ~~Apple~~ iOS team in ~~California~~ Geneva. Inspired by [Ink](https://github.com/LunarX/ink_utils).
+Designed by ~~Apple~~ iOS team in ~~California~~ Geneva. Inspired by [Ink](https://github.com/Infomaniak/ink_utils).
 
 ## Install the script
 
@@ -50,7 +50,7 @@ If you are a cool guy, you can use a Raycast script.
 # Required parameters:
 # @raycast.schemaVersion 1
 # @raycast.title Import Loco
-# @raycast.mode compact
+# @raycast.mode fullOutput
 
 # Optional parameters:
 # @raycast.icon 🌐
