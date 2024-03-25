@@ -27,7 +27,7 @@ def read_config(project):
         print(f'Error: Project "{project}" does not exist.')
         sys.exit(1)
 
-    return config[project]['project_root'], config[project]['loco_key']
+    return config[project]['project_localizable'], config[project]['loco_key']
 
 
 def update_loco(path, key):

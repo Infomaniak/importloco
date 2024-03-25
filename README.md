@@ -23,7 +23,8 @@ $ touch ~/.import_loco
 For each project, add these lines with the values corresponding to your setup:
 ```
 [project_name]
-project_root = /Users/.../project/Localizable
+project_root = /Users/.../project
+project_localizable = /Users/.../project/.../Localizable
 loco_key = xxx
 ```
 
