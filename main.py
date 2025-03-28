@@ -20,6 +20,7 @@ def read_config(project):
     :param project: project name
     :return: project root and loco api key
     """
+
     config = configparser.ConfigParser()
     config.read(config_file_path)
 
@@ -27,16 +28,18 @@ def read_config(project):
         print(f'Error: Project "{project}" does not exist.')
         sys.exit(1)
 
-    return config[project]['project_localizable'], config[project]['loco_key']
+    return config[project]['project_localizable'], config[project]['loco_key'], config[project].get('filters', [])
 
 
-def update_loco(path, key):
+def update_loco(path, key, additional_filters):
     """Fetch and replace Loco with new strings
 
     :param path: absolute path to project strings
     :param key: loco api key
     """
-    archive_url = f'https://localise.biz/api/export/archive/strings.zip?filter=ios&fallback=en&order=id&charset=utf8&key={key}'
+
+    filters = ','.join(['ios', *additional_filters])
+    archive_url = f'https://localise.biz/api/export/archive/strings.zip?filter={filters}&fallback=en&order=id&charset=utf8&key={key}'
     archive_path = download_archive(archive_url)
 
     print("String resources downloaded successfully.")
@@ -64,6 +67,7 @@ def download_archive(endpoint):
     :param endpoint: loco api endpoint
     :return: archive path
     """
+
     response = requests.get(endpoint)
     if response.status_code != 200:
         print(f'Error: Loco returned status code {response.status_code}.')
@@ -108,8 +112,8 @@ if __name__ == '__main__':
         sys.exit(1)
 
     project_name = sys.argv[1]
-    project_path, loco_key = read_config(project_name)
-    update_loco(project_path, loco_key)
+    project_path, loco_key, filters = read_config(project_name)
+    update_loco(project_path, loco_key, filters)
     error_count = validate_strings(project_path)
 
     if error_count > 0:

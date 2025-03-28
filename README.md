@@ -26,7 +26,9 @@ For each project, add these lines with the values corresponding to your setup:
 project_root = /Users/.../project
 project_localizable = /Users/.../project/.../Localizable
 loco_key = xxx
+filters = !common
 ```
+The `filters` value is optional.
 
 ## Execute the script
 
