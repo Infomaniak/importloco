@@ -28,7 +28,7 @@ project_localizable = /Users/.../project/.../Localizable
 loco_key = xxx
 filters = !common
 ```
-If the `filters` value isn't needed, use: `filters = `
+The `filters` value is optional.
 
 ## Execute the script
 
