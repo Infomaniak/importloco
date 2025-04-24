@@ -1,12 +1,12 @@
 import loco_validator.validator as loco_validator
 import os
-import re
 import shutil
 import sys
 import zipfile
 
 from config import get_project_config
 from loco_network import fetch_strings
+from translations_parser import StringsTranslationsParser
 
 # Config
 tmp_folder = '/tmp/import_loco'
@@ -47,24 +47,12 @@ def validate_strings(path):
     error_count = 0
     for language in languages:
         language_folder = f'{language}.lproj'
-        localizable_strings = parse_strings_file(f'{path}/{language_folder}/{language_file}')
+        localizable_strings = StringsTranslationsParser.parse(f"{path}/{language_folder}/{language_file}")
 
         for key, value in localizable_strings.items():
             error_count += loco_validator.validate_string(language, key, value)
 
     return error_count
-
-
-def parse_strings_file(filename):
-    data = {}
-    with open(filename, 'r', encoding='utf-8') as strings_file:
-        for line in strings_file:
-            if '=' in line:
-                key, value = [re.sub(r'^"|";?$', '', item.strip()) for item in line.split('=')]
-                value = value.replace('\"', '"')
-                data[key] = value
-
-    return data
 
 
 if __name__ == '__main__':
@@ -79,7 +67,7 @@ if __name__ == '__main__':
 
     if error_count > 0:
         plural = 's' if error_count > 1 else ''
-        print(f'{error_count} error{plural} found in translations')
-        sys.exit(2)
+        print(f'{error_count} error{plural} found in translations', file=sys.stderr)
+        sys.exit(1)
 
     print('✅ Translations successfully updated. The End. That\'s all folks!')
