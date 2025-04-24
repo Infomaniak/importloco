@@ -1,4 +1,3 @@
-import configparser
 import loco_validator.validator as loco_validator
 import os
 import re
@@ -7,28 +6,13 @@ import shutil
 import sys
 import zipfile
 
+from config import get_project_config
+
 # Config
-config_file_path = os.path.expanduser('~/.import_loco')
 tmp_folder = '/tmp/import_loco'
 loco_archive_name = 'strings.zip'
 languages = ['de', 'en', 'es', 'fr', 'it']
 language_file = 'Localizable.strings'
-
-
-def read_config(project):
-    """Read configuration file
-    :param project: project name
-    :return: project root and loco api key
-    """
-
-    config = configparser.ConfigParser()
-    config.read(config_file_path)
-
-    if not config.has_section(project):
-        print(f'Error: Project "{project}" does not exist.')
-        sys.exit(1)
-
-    return config[project]['project_localizable'], config[project]['loco_key'], config[project].get('filters', [])
 
 
 def update_loco(path, key, additional_filters):
@@ -112,13 +96,13 @@ if __name__ == '__main__':
         sys.exit(1)
 
     project_name = sys.argv[1]
-    project_path, loco_key, filters = read_config(project_name)
-    update_loco(project_path, loco_key, filters)
-    error_count = validate_strings(project_path)
+    project_configuration = get_project_config(project_name)
+    update_loco(project_configuration.destination_path, project_configuration.loco_api_key, project_configuration.filters)
+    error_count = validate_strings(project_configuration.destination_path)
 
     if error_count > 0:
         plural = 's' if error_count > 1 else ''
         print(f'{error_count} error{plural} found in translations')
         sys.exit(2)
 
-    print('Translations successfully updated. The End. That\'s all folks!')
+    print('✅ Translations successfully updated. The End. That\'s all folks!')
