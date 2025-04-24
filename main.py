@@ -1,19 +1,18 @@
 import loco_validator.validator as loco_validator
 import os
 import re
-import requests
 import shutil
 import sys
 import zipfile
 
 from config import get_project_config
+from loco_network import fetch_strings
 
 # Config
 tmp_folder = '/tmp/import_loco'
 loco_archive_name = 'strings.zip'
 languages = ['de', 'en', 'es', 'fr', 'it']
 language_file = 'Localizable.strings'
-
 
 def update_loco(path, key, additional_filters):
     """Fetch and replace Loco with new strings
@@ -23,8 +22,7 @@ def update_loco(path, key, additional_filters):
     """
 
     filters = ','.join(['ios', *additional_filters])
-    archive_url = f'https://localise.biz/api/export/archive/strings.zip?filter={filters}&fallback=en&order=id&charset=utf8&key={key}'
-    archive_path = download_archive(archive_url)
+    archive_path = fetch_strings(filters, key)
 
     print("String resources downloaded successfully.")
 
@@ -43,27 +41,6 @@ def update_loco(path, key, additional_filters):
 
     shutil.rmtree(tmp_folder)
     print('String resources updated.\n')
-
-
-def download_archive(endpoint):
-    """Download Loco archive
-
-    :param endpoint: loco api endpoint
-    :return: archive path
-    """
-
-    response = requests.get(endpoint)
-    if response.status_code != 200:
-        print(f'Error: Loco returned status code {response.status_code}.')
-        sys.exit(1)
-
-    os.makedirs(tmp_folder, exist_ok=True)
-
-    archive_path = f'{tmp_folder}/{loco_archive_name}'
-    with open(archive_path, 'wb+') as file:
-        file.write(response.content)
-
-    return archive_path
 
 
 def validate_strings(path):
