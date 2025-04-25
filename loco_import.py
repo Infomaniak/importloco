@@ -4,31 +4,28 @@ import sys
 import zipfile
 import loco_validator.validator as loco_validator
 
-from config import get_project_config
 from loco_network import fetch_archive
+from utils import *
 
 TMP_FOLDER = "/tmp/import_loco"
 SUPPORTED_LANGUAGES = ['de', 'en', 'es', 'fr', 'it']
 
-def import_and_validate_strings(project_name, strategy):
-    project_config = get_project_config(project_name)
-
+def import_and_validate_strings(project_config, strategy):
     archive_path = _download_archive(project_config, strategy)
     print("(1/3) Strings archive downloaded from Loco.")
 
     folder_with_strings = _extract_archive(archive_path)
     print("(2/3) Strings archive extracted.")
 
-    _move_files_to_destination(folder_with_strings,project_config, strategy)
+    _move_files_to_destination(folder_with_strings, project_config, strategy)
     print("(3/3) Resources updated.\n")
 
     error_count = _validate_strings(project_config, strategy)
     if error_count > 0:
         plural = 's' if error_count > 1 else ''
-        print(f'❌ {error_count} error{plural} found in translations', file=sys.stderr)
-        sys.exit(1)
-
-    print("✅ Translations successfully updated. The End. That’s all folks!")
+        print(f'❌ {RED_TEXT}{BOLD_TEXT}Ouch! {error_count} error{plural} found in translations{END_TEXT}', file=sys.stderr)
+    else:
+        print(f"✅ {GREEN_TEXT}{BOLD_TEXT}Translations updated! No errors found.{END_TEXT}")
 
 
 def _download_archive(project_config, strategy):
@@ -39,15 +36,20 @@ def _download_archive(project_config, strategy):
 
 
 def _extract_archive(archive_path):
+    if os.path.exists(TMP_FOLDER):
+        shutil.rmtree(TMP_FOLDER)
+    os.makedirs(TMP_FOLDER, exist_ok=True)
+
     with zipfile.ZipFile(archive_path, 'r') as zip_ref:
         zip_ref.extractall(TMP_FOLDER)
 
     files = os.listdir(TMP_FOLDER)
-    if len(files) <= 0:
+    directories = [file for file in files if os.path.isdir(f"{TMP_FOLDER}/{file}")]
+    if len(directories) <= 0:
         print("Error: Impossible to find extracted archive.")
         exit(1)
 
-    return files[0]
+    return directories[0]
 
 
 def _move_files_to_destination(folder, project_config, strategy):
