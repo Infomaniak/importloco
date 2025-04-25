@@ -23,12 +23,16 @@ $ touch ~/.import_loco
 For each project, add these lines with the values corresponding to your setup:
 ```
 [project_name]
-project_root = /Users/.../project
-project_localizable = /Users/.../project/.../Localizable
+localizable_path = /Users/.../project/.../Localizable
+main_target_localizable_path = /Users/.../project/.../Localizable
 loco_key = xxx
 filters = !common
 ```
-The `filters` property is optional.
+
+- `project_localizable`: Absolute path to the project's localizable files.
+- `main_target_localizable_path` *(Optional)*: Absolute path to the localizable files of the main target of the app. Required to import InfoPlist files.
+- `loco_key`: Loco API key.
+- `filters` *(Optional)*: Additional filters for the project.
 
 ## Execute the script
 
