@@ -61,7 +61,7 @@ def _move_files_to_destination(folder, project_config, strategy):
             exit(1)
 
         source_file = f"{source_directory}/{source_files[0]}"
-        target_file = f"{project_config.destination_path}/{language_folder}/{strategy.destination_filename}"
+        target_file = strategy.get_localizable_path(project_config, language_folder)
         shutil.copy(source_file, target_file)
 
 
@@ -69,7 +69,8 @@ def _validate_strings(project_config, strategy):
     error_count = 0
     for language in SUPPORTED_LANGUAGES:
         language_folder = f'{language}.lproj'
-        localizable_strings = strategy.parser.parse(f"{project_config.destination_path}/{language_folder}/{strategy.destination_filename}")
+        localizable_path = strategy.get_localizable_path(project_config, language_folder)
+        localizable_strings = strategy.parser.parse(localizable_path)
 
         for key, value in localizable_strings.items():
             error_count += loco_validator.validate_string(language, key, value)
