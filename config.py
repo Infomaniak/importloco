@@ -12,10 +12,6 @@ class ProjectConfiguration:
 
 
 def get_project_config(project):
-    """Read configuration file
-    :param project: project name
-    :return: A ProjectConfiguration object
-    """
     if not config.has_section(project):
         print(f'Error: Project "{project}" does not exist.', file=sys.stderr)
         print(f'Please check your configuration file ({CONFIG_FILE_PATH})', file=sys.stderr)

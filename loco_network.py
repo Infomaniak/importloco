@@ -3,12 +3,11 @@ from urllib.parse import urlencode
 
 BASE_URL = "https://localise.biz/api/export/archive"
 
-def fetch_strings(filters, loco_key):
-    return _fetch_archive("/strings.zip", filters, loco_key)
+def fetch_archive(path, filters, loco_key):
+    query_params = _get_default_query_params(filters, loco_key)
+    endpoint = _create_endpoint(path, query_params)
 
-
-def fetch_stringsdict(filters, loco_key):
-    return _fetch_archive("/stringsdict.zip", filters, loco_key)
+    return _download_archive(endpoint)
 
 # -- Utils
 
@@ -35,10 +34,3 @@ def _get_default_query_params(filters, loco_key):
 def _download_archive(endpoint):
     local_filename, _ = urlretrieve(endpoint)
     return local_filename
-
-
-def _fetch_archive(path, filters, loco_key):
-    query_params = _get_default_query_params(filters, loco_key)
-    endpoint = _create_endpoint(path, query_params)
-
-    return _download_archive(endpoint)

@@ -1,14 +1,12 @@
 import re
 
 class TranslationsParser:
-    @staticmethod
-    def parse(filename):
+    def parse(self, filename):
         raise NotImplementedError
 
 
 class StringsTranslationsParser(TranslationsParser):
-    @staticmethod
-    def parse(filename):
+    def parse(self, filename):
         data = {}
         with open(filename, 'r', encoding='utf-8') as strings_file:
             for line in strings_file:
