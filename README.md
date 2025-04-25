@@ -28,14 +28,14 @@ project_localizable = /Users/.../project/.../Localizable
 loco_key = xxx
 filters = !common
 ```
-The `filters` value is optional.
+The `filters` property is optional.
 
 ## Execute the script
 
 To run the script, simply execute the following line in a terminal.
 The project name corresponds to the one you added in the `.import_loco` file.
 ```bash
-$ python3 path_to_script/importLoco/main.py {project_name} 
+$ python3 path_to_script/importLoco/main.py {project_name}
 ```
 
 You can create an alias in your `.bashrc` to make life easier.
@@ -43,28 +43,9 @@ You can create an alias in your `.bashrc` to make life easier.
 alias import_loco="python3 path_to_script/importLoco/main.py"
 ```
 
-## One more thing
-
-If you are a cool guy, you can use a Raycast script.
-
+Then you can call the script as follows:
 ```bash
-#!/bin/bash
-
-# Required parameters:
-# @raycast.schemaVersion 1
-# @raycast.title Import Loco
-# @raycast.mode fullOutput
-
-# Optional parameters:
-# @raycast.icon 🌐
-# @raycast.argument1 { "type": "text", "placeholder": "kmail" }
-
-# Documentation:
-# @raycast.description Import Loco strings
-# @raycast.author valentinperignon
-# @raycast.authorURL https://raycast.com/valentinperignon
-
-python3 path_to_script/importLoco/main.py $1
+import_loco {project_name}
 ```
 
 ---
