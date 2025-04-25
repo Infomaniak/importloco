@@ -1,5 +1,6 @@
 import sys
-from import_translations import StringsImportTranslations
+from loco_import import import_and_validate_strings
+from loco_import_strategy import STRINGS_LOCO_IMPORT_STRATEGY, PLIST_LOCO_IMPORT_STRATEGY
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
@@ -8,5 +9,4 @@ if __name__ == '__main__':
 
     project_name = sys.argv[1]
 
-    importer = StringsImportTranslations(project_name)
-    importer.import_and_validate_strings()
+    import_and_validate_strings(project_name, STRINGS_LOCO_IMPORT_STRATEGY)
