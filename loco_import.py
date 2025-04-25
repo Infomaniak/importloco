@@ -14,21 +14,21 @@ def import_and_validate_strings(project_name, strategy):
     project_config = get_project_config(project_name)
 
     archive_path = _download_archive(project_config, strategy)
-    print("Strings archive successfully downloaded from Loco.")
+    print("(1/3) Strings archive downloaded from Loco.")
 
-    folder_with_strings = _extract_archive(archive_path, strategy)
-    print("Strings archive extracted.")
+    folder_with_strings = _extract_archive(archive_path)
+    print("(2/3) Strings archive extracted.")
 
     _move_files_to_destination(folder_with_strings,project_config, strategy)
-    print("Resources updated.\n")
+    print("(3/3) Resources updated.\n")
 
     error_count = _validate_strings(project_config, strategy)
     if error_count > 0:
         plural = 's' if error_count > 1 else ''
-        print(f'{error_count} error{plural} found in translations', file=sys.stderr)
+        print(f'❌ {error_count} error{plural} found in translations', file=sys.stderr)
         sys.exit(1)
 
-    print('✅ Translations successfully updated. The End. That\'s all folks!')
+    print("✅ Translations successfully updated. The End. That’s all folks!")
 
 
 def _download_archive(project_config, strategy):
@@ -38,7 +38,7 @@ def _download_archive(project_config, strategy):
     return archive_path
 
 
-def _extract_archive(archive_path, strategy):
+def _extract_archive(archive_path):
     with zipfile.ZipFile(archive_path, 'r') as zip_ref:
         zip_ref.extractall(TMP_FOLDER)
 

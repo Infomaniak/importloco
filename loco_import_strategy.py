@@ -1,4 +1,4 @@
-from translations_parser import StringsTranslationsParser
+from translations_parser import StringsTranslationsParser, StringsDictTranslationsParser
 
 class LocoImportStrategy:
     def __init__(self, filters, parser, endpoint, destination_filename):
@@ -15,9 +15,16 @@ STRINGS_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
     "Localizable.strings"
 )
 
-PLIST_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
+INFO_PLIST_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
     ["ios-info-plist"],
     StringsTranslationsParser(),
     "/strings.zip",
     "InfoPlist.strings"
+)
+
+STRINGS_DICT_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
+    ["ios-stringsdict"],
+    StringsDictTranslationsParser(),
+    "/stringsdict.zip",
+    "Localizable.stringsdict"
 )

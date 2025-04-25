@@ -16,3 +16,8 @@ class StringsTranslationsParser(TranslationsParser):
                     data[key] = value
 
         return data
+
+
+class StringsDictTranslationsParser(TranslationsParser):
+    def parse(self, filename):
+        print("coucou")
