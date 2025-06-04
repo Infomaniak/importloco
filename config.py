@@ -19,11 +19,12 @@ def get_project_config(project):
         sys.exit(1)
 
     project = config[project]
+    filters = project.get("filters", "").split(",")
     return ProjectConfiguration(
         project["localizable_path"],
         project.get("main_target_localizable_path", None),
         project["loco_key"],
-        project.get("filters", [])
+        filters
     )
 
 
