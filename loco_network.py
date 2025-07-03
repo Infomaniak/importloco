@@ -1,13 +1,26 @@
 from urllib.request import urlretrieve
 from urllib.parse import urlencode
+import requests
 
-BASE_URL = "https://localise.biz/api/export/archive"
+BASE_URL = "https://localise.biz/api"
 
 def fetch_archive(path, filters, loco_key):
     query_params = _get_default_query_params(filters, loco_key)
-    endpoint = _create_endpoint(path, query_params)
+    endpoint = _create_endpoint(f"/export/archive/{path}", query_params)
 
     return _download_archive(endpoint)
+
+
+def fetch_tags(loco_key):
+    endpoint = _create_endpoint("/tags")
+
+    headers = { "Authorization": f"Loco {loco_key}" }
+    response = requests.get(endpoint, headers=headers)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None
 
 # -- Utils
 
