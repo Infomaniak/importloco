@@ -3,12 +3,13 @@ import shutil
 import sys
 import zipfile
 import loco_validator.validator as loco_validator
-
-from loco_network import fetch_archive
+from loco_network import fetch_archive, fetch_tags
 from utils import *
 
 TMP_FOLDER = "/tmp/import_loco"
 SUPPORTED_LANGUAGES = ['de', 'en', 'es', 'fr', 'it']
+
+FILTERS_TO_IGNORE = ["android"]
 
 def import_and_validate_strings(project_config, strategy):
     archive_path = _download_archive(project_config, strategy)
@@ -29,10 +30,21 @@ def import_and_validate_strings(project_config, strategy):
 
 
 def _download_archive(project_config, strategy):
-    filters = ','.join([*strategy.filters, *project_config.filters])
+    filters = _compute_filters(project_config, strategy)
     archive_path = fetch_archive(strategy.endpoint, filters, project_config.loco_api_key)
 
     return archive_path
+
+
+def _compute_filters(project_config, strategy):
+    if len(project_config.filters) == 0:
+        return strategy.filters
+    
+    all_loco_project_filters = fetch_tags(project_config.loco_api_key)
+    filters_to_exclude = [*strategy.filters, *project_config.filters, *FILTERS_TO_IGNORE]
+    not_filters = [ f"!{filter}" for filter in all_loco_project_filters if filter not in filters_to_exclude ]
+    
+    return ",".join([*strategy.filters, *not_filters])
 
 
 def _extract_archive(archive_path):
