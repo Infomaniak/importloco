@@ -19,7 +19,8 @@ def get_project_config(project):
         sys.exit(1)
 
     project = config[project]
-    filters = project.get("filters", "").split(",")
+    raw_filters = project.get("filters", "").split(",")
+    filters = [ filter for filter in raw_filters if len(filter) > 0 ]
     return ProjectConfiguration(
         project["localizable_path"],
         project.get("main_target_localizable_path", None),
