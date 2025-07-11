@@ -4,6 +4,7 @@ from config import get_project_config
 from loco_import import import_and_validate_strings
 from loco_import_strategy import STRINGS_LOCO_IMPORT_STRATEGY, STRINGS_DICT_LOCO_IMPORT_STRATEGY, INFO_PLIST_LOCO_IMPORT_STRATEGY
 from utils import *
+from git_service import check_updates
 
 def handle_strings_import(arguments, project_config):
     import_strings = arguments.strings
@@ -31,6 +32,8 @@ def import_and_validate_for_a_strategy(project_config, file_type, strategy):
 
 
 if __name__ == "__main__":
+    check_updates()
+
     parser = argparse.ArgumentParser(
         prog="import_loco",
         description="Easily import the l8n strings from Loco into your projects.",
