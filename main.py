@@ -4,7 +4,7 @@ from config import get_project_config
 from loco_import import import_and_validate_strings
 from loco_import_strategy import STRINGS_LOCO_IMPORT_STRATEGY, STRINGS_DICT_LOCO_IMPORT_STRATEGY, INFO_PLIST_LOCO_IMPORT_STRATEGY
 from utils import *
-from git_service import check_updates
+from git_service import check_updates, update_project
 
 def handle_strings_import(arguments, project_config):
     import_strings = arguments.strings
@@ -48,7 +48,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     project_name = args.project
-    config = get_project_config(project_name)
 
-    handle_strings_import(args, config)
+    if project_name == "update":
+        update_project()
+    else:
+        config = get_project_config(project_name)
+        handle_strings_import(args, config)
 
