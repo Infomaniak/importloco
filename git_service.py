@@ -25,7 +25,7 @@ def check_updates():
         return
     
     if local_commit != remote_commit:
-        print(f"ℹ️ {RED_TEXT}{BOLD_TEXT} Update available on GitHub!{END_TEXT}")
+        print(f"🚨 {RED_TEXT}{BOLD_TEXT} Update available on GitHub!{END_TEXT}")
         print(f"   Run {BOLD_TEXT}`import_loco update`{END_TEXT} to update the script\n")
 
     _set_last_check_today()
