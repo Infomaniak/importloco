@@ -46,9 +46,9 @@ if __name__ == "__main__":
 
     parser.add_argument("project", help="Name of the project, as defined in the configuration file")
 
-    parser.add_argument("-s", "--strings", action="store_true", help="Import Localizable.strings files")
-    parser.add_argument("-p", "--plural-strings", action="store_true", help="Import Localizable.stringsdict files")
-    parser.add_argument("-ip", "--info-plist", action="store_true", help="Import InfoPlist.strings files")
+    parser.add_argument("-s", "--strings", action="store_true", help="Check/Import Localizable.strings files")
+    parser.add_argument("-p", "--plural-strings", action="store_true", help="Check/Import Localizable.stringsdict files")
+    parser.add_argument("-ip", "--info-plist", action="store_true", help="Check/Import InfoPlist.strings files")
     parser.add_argument("-c", "--check-only", action="store_true", help="Check if the strings are valid without importing them")
 
     args = parser.parse_args()
