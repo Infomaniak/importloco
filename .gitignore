@@ -1,0 +1,6 @@
+.venv
+.idea
+build/
+dist/
+.last_update_check
+main.spec
