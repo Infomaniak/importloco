@@ -11,22 +11,31 @@ SUPPORTED_LANGUAGES = ['de', 'en', 'es', 'fr', 'it']
 
 FILTERS_TO_IGNORE = ["android"]
 
-def import_and_validate_strings(project_config, strategy):
-    archive_path = _download_archive(project_config, strategy)
-    print("(1/3) Strings archive downloaded from Loco.")
+def import_and_validate_strings(project_config, strategy, check_only):
+    folder_with_strings = _download_and_extract_archive(project_config, strategy)
+    print("- Strings archive downloaded and extracted.")
 
-    folder_with_strings = _extract_archive(archive_path)
-    print("(2/3) Strings archive extracted.")
+    if not check_only:
+        _move_files_to_destination(folder_with_strings, project_config, strategy)
+        print("- Resources updated.")
 
-    _move_files_to_destination(folder_with_strings, project_config, strategy)
-    print("(3/3) Resources updated.\n")
+    print("")
 
     error_count = _validate_strings(project_config, strategy)
     if error_count > 0:
         plural = 's' if error_count > 1 else ''
         print(f'❌ {RED_TEXT}{BOLD_TEXT}Ouch! {error_count} error{plural} found in translations{END_TEXT}', file=sys.stderr)
+        return False
     else:
         print(f"✅ {GREEN_TEXT}{BOLD_TEXT}Translations updated! No errors found.{END_TEXT}")
+        return True
+
+
+def _download_and_extract_archive(project_config, strategy):
+    archive_path = _download_archive(project_config, strategy)
+    folder_with_strings = _extract_archive(archive_path)
+    
+    return folder_with_strings
 
 
 def _download_archive(project_config, strategy):
