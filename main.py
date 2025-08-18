@@ -28,7 +28,6 @@ def handle_strings_import(arguments, project_config):
         if not import_and_validate_for_a_strategy(project_config, "InfoPlist.strings", INFO_PLIST_LOCO_IMPORT_STRATEGY, arguments.check_only):
             has_error = True
 
-    print("\nThe End. That’s all folks!")
     return has_error
 
 
