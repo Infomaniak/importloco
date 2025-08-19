@@ -26,7 +26,7 @@ def run_completion_over_strategies(strategies, project_config, completion):
     return has_succeeded
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         prog="import_loco",
         description="Easily check and import the l8n strings from Loco into your projects.",
@@ -60,3 +60,7 @@ if __name__ == "__main__":
     has_succeeded = run_completion_over_strategies(strategies, config, completion)
 
     sys.exit(0 if has_succeeded else 1)
+
+
+if __name__ == "__main__":
+    main()
