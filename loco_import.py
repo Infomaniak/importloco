@@ -51,7 +51,7 @@ def _extract_archive(archive_path):
     directories = [file for file in files if os.path.isdir(f"{TMP_FOLDER}/{file}")]
     if len(directories) <= 0:
         print("Error: Impossible to find extracted archive.", file=sys.stderr)
-        exit(1)
+        sys.exit(1)
 
     return directories[0]
 
@@ -64,7 +64,7 @@ def _move_files_to_destination(folder, project_config, strategy):
         source_files = os.listdir(source_directory)
         if len(source_files) <= 0:
             print(f"Error: Impossible to find the downloaded in {source_directory}.", file=sys.stderr)
-            exit(1)
+            sys.exit(1)
 
         source_file = f"{source_directory}/{source_files[0]}"
         target_file = strategy.get_localizable_path(project_config, language_folder)

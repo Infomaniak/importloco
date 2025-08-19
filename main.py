@@ -1,12 +1,12 @@
 import argparse
 import utils
+import sys
 
 from config import get_project_config
 from strings_config import StringsConfig
 from loco_import import validate_and_import_strings
 from loco_import_strategy import STRINGS_LOCO_IMPORT_STRATEGY, STRINGS_DICT_LOCO_IMPORT_STRATEGY, INFO_PLIST_LOCO_IMPORT_STRATEGY
 from loco_validate import validate_strings
-from git_service import check_updates, update_project
 
 def run_completion_over_strategies(strategies, project_config, completion):
     has_succeeded = True
@@ -27,8 +27,6 @@ def run_completion_over_strategies(strategies, project_config, completion):
 
 
 if __name__ == "__main__":
-    check_updates()
-
     parser = argparse.ArgumentParser(
         prog="import_loco",
         description="Easily check and import the l8n strings from Loco into your projects.",
@@ -45,24 +43,20 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    action_name = args.project
+    project_name = args.project
     if args.verbose:
         utils.is_verbose = True
 
-    if action_name == "update":
-        update_project()
-    else:
-        config = get_project_config(project=action_name)
-        
-        strings_config = StringsConfig(args)
-        strategies = [
-            (strings_config.strings, STRINGS_LOCO_IMPORT_STRATEGY),
-            (strings_config.plural_strings, STRINGS_DICT_LOCO_IMPORT_STRATEGY),
-            (strings_config.info_plist, INFO_PLIST_LOCO_IMPORT_STRATEGY),
-        ]
+    config = get_project_config(project=project_name)
 
-        completion = validate_strings if args.check_source else validate_and_import_strings
-        has_succeeded = run_completion_over_strategies(strategies, config, completion)
+    strings_config = StringsConfig(args)
+    strategies = [
+        (strings_config.strings, STRINGS_LOCO_IMPORT_STRATEGY),
+        (strings_config.plural_strings, STRINGS_DICT_LOCO_IMPORT_STRATEGY),
+        (strings_config.info_plist, INFO_PLIST_LOCO_IMPORT_STRATEGY),
+    ]
 
-        exit(0 if has_succeeded else 1)
+    completion = validate_strings if args.check_source else validate_and_import_strings
+    has_succeeded = run_completion_over_strategies(strategies, config, completion)
 
+    sys.exit(0 if has_succeeded else 1)
