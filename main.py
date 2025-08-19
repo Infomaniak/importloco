@@ -2,43 +2,28 @@ import argparse
 import utils
 
 from config import get_project_config
-from loco_import import check_and_import_strings
+from strings_config import StringsConfig
+from loco_import import validate_and_import_strings
 from loco_import_strategy import STRINGS_LOCO_IMPORT_STRATEGY, STRINGS_DICT_LOCO_IMPORT_STRATEGY, INFO_PLIST_LOCO_IMPORT_STRATEGY
+from loco_validate import validate_strings
 from git_service import check_updates, update_project
 
+def run_completion_over_strategies(strategies, project_config, completion):
+    has_succeeded = True
+    is_first = True
+    for enabled, strategy in strategies:
+        if not enabled:
+            continue
 
-def handle_strings_check_source():
-    return True
+        if not is_first:
+            print("")
 
+        is_first = False
+        utils.print_new_file(strategy.destination_filename)
+        if not completion(project_config, strategy):
+            has_succeeded = False
 
-def handle_strings_check_and_import(arguments, project_config):
-    import_strings = arguments.strings
-    import_plural_strings = arguments.plural_strings
-    import_info_plist = arguments.info_plist
-
-    if import_strings is False and import_plural_strings is False and import_info_plist is False:
-        import_strings, import_plural_strings, import_info_plist = True, True, True
-
-    has_error = False
-
-    if import_strings:
-        if not check_and_import_for_a_strategy(project_config, "Localizable.strings", STRINGS_LOCO_IMPORT_STRATEGY):
-            has_error = True
-    if import_plural_strings:
-        if import_strings is True: print("\n")
-        if not check_and_import_for_a_strategy(project_config, "Localizable.stringsdict", STRINGS_DICT_LOCO_IMPORT_STRATEGY):
-            has_error = True
-    if import_info_plist:
-        if import_strings is True or import_plural_strings is True: print("\n")
-        if not check_and_import_for_a_strategy(project_config, "InfoPlist.strings", INFO_PLIST_LOCO_IMPORT_STRATEGY):
-            has_error = True
-
-    return has_error
-
-
-def check_and_import_for_a_strategy(project_config, file_type, strategy):
-    print(f"💬 {utils.BOLD_TEXT}{file_type}{utils.END_TEXT}\n")
-    return check_and_import_strings(project_config, strategy)
+    return has_succeeded
 
 
 if __name__ == "__main__":
@@ -54,6 +39,7 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--strings", action="store_true", help="Check/Import Localizable.strings files")
     parser.add_argument("-p", "--plural-strings", action="store_true", help="Check/Import Localizable.stringsdict files")
     parser.add_argument("-ip", "--info-plist", action="store_true", help="Check/Import InfoPlist.strings files")
+    
     parser.add_argument("-c", "--check-source", action="store_true", help="Check if the project's strings are valid")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose mode")
 
@@ -67,12 +53,16 @@ if __name__ == "__main__":
         update_project()
     else:
         config = get_project_config(project=action_name)
+        
+        strings_config = StringsConfig(args)
+        strategies = [
+            (strings_config.strings, STRINGS_LOCO_IMPORT_STRATEGY),
+            (strings_config.plural_strings, STRINGS_DICT_LOCO_IMPORT_STRATEGY),
+            (strings_config.info_plist, INFO_PLIST_LOCO_IMPORT_STRATEGY),
+        ]
 
-        if args.check_source:
-            has_error = handle_strings_check_source()
-        else:
-            has_error = handle_strings_check_and_import(args, config)
+        completion = validate_strings if args.check_source else validate_and_import_strings
+        has_succeeded = run_completion_over_strategies(strategies, config, completion)
 
-        exit_code = 1 if has_error else 0
-        exit(exit_code)
+        exit(0 if has_succeeded else 1)
 

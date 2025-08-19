@@ -2,16 +2,11 @@ import os
 import shutil
 import sys
 import zipfile
-import loco_validator.validator as loco_validator
+import loco_validate
 from loco_network import fetch_archive, fetch_tags
 from utils import *
 
-TMP_FOLDER = "/tmp/import_loco"
-SUPPORTED_LANGUAGES = ['de', 'en', 'es', 'fr', 'it']
-
-FILTERS_TO_IGNORE = ["android"]
-
-def check_and_import_strings(project_config, strategy):
+def validate_and_import_strings(project_config, strategy):
     archive_path = _download_archive(project_config, strategy)
     print_if_verbose("(1/3) Strings archive downloaded from Loco.")
 
@@ -21,14 +16,9 @@ def check_and_import_strings(project_config, strategy):
     _move_files_to_destination(folder_with_strings, project_config, strategy)
     print_if_verbose("(3/3) Resources updated.\n") 
 
-    error_count = _validate_strings(project_config, strategy)
-    if error_count > 0:
-        plural = 's' if error_count > 1 else ''
-        print(f'❌ {RED_TEXT}{BOLD_TEXT}Ouch! {error_count} error{plural} found in translations{END_TEXT}', file=sys.stderr)
-        return False
-    else:
-        print(f"✅ {GREEN_TEXT}{BOLD_TEXT}Translations updated! No errors found.{END_TEXT}")
-        return True
+    error_count = loco_validate.compute_error_count(project_config, strategy)
+    loco_validate.show_result(error_count)
+    return True if error_count == 0 else False
 
 
 def _download_archive(project_config, strategy):
@@ -79,16 +69,3 @@ def _move_files_to_destination(folder, project_config, strategy):
         source_file = f"{source_directory}/{source_files[0]}"
         target_file = strategy.get_localizable_path(project_config, language_folder)
         shutil.copy(source_file, target_file)
-
-
-def _validate_strings(project_config, strategy):
-    error_count = 0
-    for language in SUPPORTED_LANGUAGES:
-        language_folder = f'{language}.lproj'
-        localizable_path = strategy.get_localizable_path(project_config, language_folder)
-        localizable_strings = strategy.parser.parse(localizable_path)
-
-        for key, value in localizable_strings.items():
-            error_count += loco_validator.validate_string(language, key, value)
-
-    return error_count
