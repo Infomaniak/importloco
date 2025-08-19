@@ -1,9 +1,9 @@
 import argparse
+import utils
 
 from config import get_project_config
 from loco_import import import_and_validate_strings
 from loco_import_strategy import STRINGS_LOCO_IMPORT_STRATEGY, STRINGS_DICT_LOCO_IMPORT_STRATEGY, INFO_PLIST_LOCO_IMPORT_STRATEGY
-from utils import *
 from git_service import check_updates, update_project
 
 def handle_strings_import(arguments, project_config):
@@ -32,7 +32,7 @@ def handle_strings_import(arguments, project_config):
 
 
 def import_and_validate_for_a_strategy(project_config, file_type, strategy, check_only):
-    print(f"💬 {BOLD_TEXT}{file_type}{END_TEXT}\n")
+    print(f"💬 {utils.BOLD_TEXT}{file_type}{utils.END_TEXT}\n")
     return import_and_validate_strings(project_config, strategy, check_only)
 
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         prog="import_loco",
-        description="Easily import the l8n strings from Loco into your projects.",
+        description="Easily check and import the l8n strings from Loco into your projects.",
     )
 
     parser.add_argument("project", help="Name of the project, as defined in the configuration file")
@@ -50,15 +50,18 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--plural-strings", action="store_true", help="Check/Import Localizable.stringsdict files")
     parser.add_argument("-ip", "--info-plist", action="store_true", help="Check/Import InfoPlist.strings files")
     parser.add_argument("-c", "--check-only", action="store_true", help="Check if the strings are valid without importing them")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose mode")
 
     args = parser.parse_args()
 
-    project_name = args.project
+    action_name = args.project
+    if args.verbose:
+        utils.is_verbose = True
 
-    if project_name == "update":
+    if action_name == "update":
         update_project()
     else:
-        config = get_project_config(project_name)
+        config = get_project_config(action_name)
         has_error = handle_strings_import(args, config)
         
         exit_code = 1 if has_error else 0

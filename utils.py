@@ -1,6 +1,10 @@
 import os
 
-# Variables
+# Generic variables
+
+is_verbose = False
+
+# Constants
 
 BOLD_TEXT = "\033[1m"
 
@@ -10,6 +14,11 @@ GREEN_TEXT = "\033[92m"
 END_TEXT = "\033[0m"
 
 # Functions
+
+def print_if_verbose(str):
+    if not is_verbose: return
+    print(str)
+
 
 def get_project_root():
     path = os.path.abspath(__file__)

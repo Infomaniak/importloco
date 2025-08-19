@@ -13,13 +13,13 @@ FILTERS_TO_IGNORE = ["android"]
 
 def import_and_validate_strings(project_config, strategy, check_only):
     folder_with_strings = _download_and_extract_archive(project_config, strategy)
-    print("- Strings archive downloaded and extracted.")
+    print_if_verbose("- Strings archive downloaded and extracted.")
 
     if not check_only:
         _move_files_to_destination(folder_with_strings, project_config, strategy)
-        print("- Resources updated.")
+        print_if_verbose("- Resources updated.")
 
-    print("")
+    print_if_verbose("")
 
     error_count = _validate_strings(project_config, strategy)
     if error_count > 0:
@@ -67,7 +67,7 @@ def _extract_archive(archive_path):
     files = os.listdir(TMP_FOLDER)
     directories = [file for file in files if os.path.isdir(f"{TMP_FOLDER}/{file}")]
     if len(directories) <= 0:
-        print("Error: Impossible to find extracted archive.")
+        print("Error: Impossible to find extracted archive.", file=sys.stderr)
         exit(1)
 
     return directories[0]
