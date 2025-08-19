@@ -1,7 +1,7 @@
 import sys
 import loco_validator.validator as loco_validator
 
-from utils import *
+from import_loco.utils import *
 
 def validate_strings(project_config, strategy):
     error_count = compute_error_count(project_config, strategy)

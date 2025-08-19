@@ -1,14 +1,14 @@
 import argparse
-import utils
+import import_loco.utils as utils
 import sys
 
-from config import get_project_config
-from strings_config import StringsConfig
-from loco_import import validate_and_import_strings
-from loco_import_strategy import STRINGS_LOCO_IMPORT_STRATEGY, STRINGS_DICT_LOCO_IMPORT_STRATEGY, INFO_PLIST_LOCO_IMPORT_STRATEGY
-from loco_validate import validate_strings
+from import_loco.config import get_project_config
+from import_loco.strings_config import StringsConfig
+from import_loco.loco_import import validate_and_import_strings
+from import_loco.loco_import_strategy import STRINGS_LOCO_IMPORT_STRATEGY, STRINGS_DICT_LOCO_IMPORT_STRATEGY, INFO_PLIST_LOCO_IMPORT_STRATEGY
+from import_loco.loco_validate import validate_strings
 
-def run_completion_over_strategies(strategies, project_config, completion):
+def _run_completion_over_strategies(strategies, project_config, completion):
     has_succeeded = True
     is_first = True
     for enabled, strategy in strategies:
@@ -57,7 +57,7 @@ def main():
     ]
 
     completion = validate_strings if args.check_source else validate_and_import_strings
-    has_succeeded = run_completion_over_strategies(strategies, config, completion)
+    has_succeeded = _run_completion_over_strategies(strategies, config, completion)
 
     sys.exit(0 if has_succeeded else 1)
 

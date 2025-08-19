@@ -13,4 +13,4 @@ dependencies = [
 ]
 
 [project.scripts]
-import_loco = "main:main"
+import_loco = "import_loco:main"
