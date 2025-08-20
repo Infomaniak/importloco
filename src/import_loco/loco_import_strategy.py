@@ -1,4 +1,4 @@
-from translations_parser import StringsTranslationsParser, StringsDictTranslationsParser
+from import_loco.translations_parser import StringsTranslationsParser, StringsDictTranslationsParser
 
 class LocoImportStrategy:
     def __init__(self, filters, parser, endpoint, destination_filename, use_main_target = False):
