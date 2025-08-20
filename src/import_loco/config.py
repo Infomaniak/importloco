@@ -12,10 +12,12 @@ class ProjectConfiguration:
         self.filters = filters
 
 
-def get_project_config(project):
+def get_project_config(project, config_file):
+    config = _read_config(config_file)
+
     if not config.has_section(project):
         print(f'Error: Project "{project}" does not exist.', file=sys.stderr)
-        print(f'Please check your configuration file ({CONFIG_FILE_PATH})', file=sys.stderr)
+        print(f'Please check your configuration file ({config_file})', file=sys.stderr)
         sys.exit(1)
 
     project = config[project]
@@ -29,13 +31,17 @@ def get_project_config(project):
     )
 
 
-def _ensure_config_file_exist():
-    if os.path.isfile(CONFIG_FILE_PATH) is False:
+def _read_config(config_file):
+    _ensure_config_file_exist(config_file)
+    
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    return config
+
+
+def _ensure_config_file_exist(config_file):
+    if os.path.isfile(config_file) is False:
         print(f"Error: Configuration file is missing.", file=sys.stderr)
-        print(f"Please create a configuration file ({CONFIG_FILE_PATH}).", file=sys.stderr)
+        print(f"Please create a configuration file ({config_file}).", file=sys.stderr)
         sys.exit(1)
 
-
-_ensure_config_file_exist()
-config = configparser.ConfigParser()
-config.read(CONFIG_FILE_PATH)

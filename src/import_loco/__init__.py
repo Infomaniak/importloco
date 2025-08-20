@@ -2,7 +2,7 @@ import argparse
 import import_loco.utils as utils
 import sys
 
-from import_loco.config import get_project_config
+from import_loco.config import get_project_config, CONFIG_FILE_PATH
 from import_loco.strings_config import StringsConfig
 from import_loco.loco_import import validate_and_import_strings
 from import_loco.loco_import_strategy import STRINGS_LOCO_IMPORT_STRATEGY, STRINGS_DICT_LOCO_IMPORT_STRATEGY, INFO_PLIST_LOCO_IMPORT_STRATEGY
@@ -41,13 +41,16 @@ def main():
     parser.add_argument("-c", "--check-source", action="store_true", help="Check if the project's strings are valid")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose mode")
 
+    parser.add_argument("--config-file", default=CONFIG_FILE_PATH, help="Path to the configuration file (default: ~/.import_loco)")
+
     args = parser.parse_args()
 
     project_name = args.project
     if args.verbose:
         utils.is_verbose = True
 
-    config = get_project_config(project=project_name)
+    config_file = args.config_file
+    config = get_project_config(project=project_name, config_file=config_file)
 
     strings_config = StringsConfig(args)
     strategies = [
