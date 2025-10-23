@@ -21,6 +21,14 @@ STRINGS_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
     "Localizable.strings"
 )
 
+MAIN_TARGET_STRINGS_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
+    ["ios-main-target"],
+    StringsTranslationsParser(),
+    "strings.zip",
+    "Localizable.strings",
+    use_main_target=True
+)
+
 INFO_PLIST_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
     ["ios-info-plist"],
     StringsTranslationsParser(),

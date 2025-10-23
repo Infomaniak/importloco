@@ -23,8 +23,8 @@ def print_if_verbose(str):
     print(str)
 
 
-def print_new_file(filename):
-    print(f"💬 {BOLD_TEXT}{filename}{END_TEXT}\n")
+def print_new_file(filename, main_target):
+    print(f"💬 {BOLD_TEXT}{filename}{' (Main Target)' if main_target else ''}{END_TEXT}\n")
 
 
 def get_project_root():
