@@ -21,6 +21,7 @@ distribution = true
 import_loco = "python -m import_loco"
 
 [tool.ruff]
+exclude = ["src/loco_validator"]
 line-length = 130
 
 [tool.ruff.lint]
@@ -29,4 +30,7 @@ ignore = ["F403", "F405"]
 [dependency-groups]
 lint = [
     "ruff>=0.14.13",
+]
+test = [
+    "pytest>=8.4.2",
 ]

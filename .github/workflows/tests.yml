@@ -1,4 +1,4 @@
-name: Ruff Lint
+name: Run Tests
 
 on:
   pull_request:
@@ -8,8 +8,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Check linting
+  tests:
+    name: Run Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -25,5 +25,5 @@ jobs:
       - name: PDM installs dependencies
         run: pdm install
 
-      - name: Ruff Lint
-        run: pdm run ruff check
+      - name: Run tests
+        run: pdm run pytest
