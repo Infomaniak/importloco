@@ -26,4 +26,4 @@ jobs:
         run: pdm install
 
       - name: Ruff Lint
-        run: pdm run ruff check src/import_loco
+        run: pdm run ruff check
