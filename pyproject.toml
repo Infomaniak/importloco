@@ -16,3 +16,6 @@ build-backend = "pdm.backend"
 
 [tool.pdm]
 distribution = true
+
+[tool.pdm.scripts]
+import_loco = "python -m import_loco"
