@@ -1,4 +1,4 @@
-from import_loco.translations_parser import StringsTranslationsParser, StringsDictTranslationsParser
+from import_loco.translations_parser import StringsDictTranslationsParser, StringsTranslationsParser
 
 
 class LocoImportStrategy:

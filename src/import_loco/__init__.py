@@ -1,17 +1,17 @@
 import argparse
-import import_loco.utils as utils
 import sys
 
-from import_loco.config import get_project_config, CONFIG_FILE_PATH
-from import_loco.strings_config import StringsConfig
+import import_loco.utils as utils
+from import_loco.config import CONFIG_FILE_PATH, get_project_config
 from import_loco.loco_import import validate_and_import_strings
 from import_loco.loco_import_strategy import (
-    STRINGS_LOCO_IMPORT_STRATEGY,
+    INFO_PLIST_LOCO_IMPORT_STRATEGY,
     MAIN_TARGET_STRINGS_LOCO_IMPORT_STRATEGY,
     STRINGS_DICT_LOCO_IMPORT_STRATEGY,
-    INFO_PLIST_LOCO_IMPORT_STRATEGY,
+    STRINGS_LOCO_IMPORT_STRATEGY,
 )
 from import_loco.loco_validate import validate_strings
+from import_loco.strings_config import StringsConfig
 
 
 def _run_completion_over_strategies(strategies, project_config, completion):

@@ -1,5 +1,6 @@
-from urllib.request import urlretrieve
 from urllib.parse import urlencode
+from urllib.request import urlretrieve
+
 import requests
 
 BASE_URL = "https://localise.biz/api"

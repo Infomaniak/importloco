@@ -20,9 +20,6 @@ distribution = true
 [tool.pdm.scripts]
 import_loco = "python -m import_loco"
 
-[tool.pdm.python]
-providers = ["path"]
-
 [tool.ruff]
 line-length = 130
 

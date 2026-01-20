@@ -1,6 +1,6 @@
 import sys
-import loco_validator.validator as loco_validator
 
+import loco_validator.validator as loco_validator
 from import_loco.utils import *
 
 
