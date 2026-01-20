@@ -1,16 +1,21 @@
-[build-system]
-requires = ["setuptools >= 77.0.3"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "import_loco"
-description = "Easily check and import the l8n strings from Loco into your projects."
-license = "Apache-2.0"
-dynamic = ["version"]
-requires-python = ">=3.7"
-dependencies = [
-    "requests==2.28.2"
+description = "Easily check and import the l8n strings from Loco into your projects"
+authors = [
+    {name = "Valentin Perignon", email = "valentin.perignon@infomaniak.com"},
 ]
+dependencies = ["requests==2.28.2"]
+requires-python = ">=3.9"
+readme = "README.md"
+license = {text = "Apache License 2.0"}
+dynamic = ["version"]
 
-[project.scripts]
-import_loco = "import_loco:main"
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.scripts]
+import_loco = "python -m import_loco"
