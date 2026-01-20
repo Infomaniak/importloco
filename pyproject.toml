@@ -30,3 +30,6 @@ ignore = ["F403", "F405"]
 lint = [
     "ruff>=0.14.13",
 ]
+test = [
+    "pytest>=8.4.2",
+]
