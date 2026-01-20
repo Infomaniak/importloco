@@ -32,38 +32,49 @@ def _run_completion_over_strategies(strategies, project_config, completion):
     return has_succeeded
 
 
+def add_parser_arguments(parser: argparse.ArgumentParser):
+    parser.add_argument(
+        "-r",
+        "--resource",
+        action="append",
+        default=[],
+        help="Specify the kind of resources to import",
+    )
+    parser.add_argument(
+        "-c",
+        "--check",
+        action="store_true",
+        help="Run a complete check over the project's strings",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose mode",
+    )
+    parser.add_argument(
+        "--config",
+        default=CONFIG_FILE_PATH,
+        help="Configuration path (default: ./.import_loco.yml)",
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="import_loco",
         description="Easily check and import the l8n strings from Loco into your projects.",
     )
+    add_parser_arguments(parser)
 
-    parser.add_argument("project", help="Name of the project, as defined in the configuration file")
+    parsed_arguments = parser.parse_args()
 
-    parser.add_argument("-s", "--strings", action="store_true", help="Check/Import Localizable.strings files")
-    parser.add_argument(
-        "-ms", "--main-target-strings", action="store_true", help="Check/Import Localizable.strings files in the main target"
-    )
-    parser.add_argument("-p", "--plural-strings", action="store_true", help="Check/Import Localizable.stringsdict files")
-    parser.add_argument("-ip", "--info-plist", action="store_true", help="Check/Import InfoPlist.strings files")
-
-    parser.add_argument("-c", "--check-source", action="store_true", help="Check if the project's strings are valid")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose mode")
-
-    parser.add_argument(
-        "--config-file", default=CONFIG_FILE_PATH, help="Path to the configuration file (default: ~/.import_loco)"
-    )
-
-    args = parser.parse_args()
-
-    project_name = args.project
-    if args.verbose:
+    if parsed_arguments.verbose:
         utils.is_verbose = True
 
-    config_file = args.config_file
+    config_file = parsed_arguments.config_file
     config = get_project_config(project=project_name, config_file=config_file)
 
-    strings_config = StringsConfig(args)
+    strings_config = StringsConfig(parsed_arguments)
     strategies = [
         (strings_config.strings, STRINGS_LOCO_IMPORT_STRATEGY),
         (strings_config.main_target_strings, MAIN_TARGET_STRINGS_LOCO_IMPORT_STRATEGY),
@@ -71,7 +82,7 @@ def main():
         (strings_config.info_plist, INFO_PLIST_LOCO_IMPORT_STRATEGY),
     ]
 
-    completion = validate_strings if args.check_source else validate_and_import_strings
+    completion = validate_strings if parsed_arguments.check_source else validate_and_import_strings
     has_succeeded = _run_completion_over_strategies(strategies, config, completion)
 
     sys.exit(0 if has_succeeded else 1)
