@@ -2,7 +2,7 @@ import configparser
 import os
 import sys
 
-CONFIG_FILE_PATH = os.path.expanduser("~/.import_loco")
+CONFIG_FILE_PATH = os.path.expanduser(".import_loco.yml")
 
 
 class ProjectConfiguration:
