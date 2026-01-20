@@ -5,8 +5,14 @@ import sys
 from import_loco.config import get_project_config, CONFIG_FILE_PATH
 from import_loco.strings_config import StringsConfig
 from import_loco.loco_import import validate_and_import_strings
-from import_loco.loco_import_strategy import STRINGS_LOCO_IMPORT_STRATEGY, MAIN_TARGET_STRINGS_LOCO_IMPORT_STRATEGY, STRINGS_DICT_LOCO_IMPORT_STRATEGY, INFO_PLIST_LOCO_IMPORT_STRATEGY
+from import_loco.loco_import_strategy import (
+    STRINGS_LOCO_IMPORT_STRATEGY,
+    MAIN_TARGET_STRINGS_LOCO_IMPORT_STRATEGY,
+    STRINGS_DICT_LOCO_IMPORT_STRATEGY,
+    INFO_PLIST_LOCO_IMPORT_STRATEGY,
+)
 from import_loco.loco_validate import validate_strings
+
 
 def _run_completion_over_strategies(strategies, project_config, completion):
     has_succeeded = True
@@ -35,14 +41,18 @@ def main():
     parser.add_argument("project", help="Name of the project, as defined in the configuration file")
 
     parser.add_argument("-s", "--strings", action="store_true", help="Check/Import Localizable.strings files")
-    parser.add_argument("-ms", "--main-target-strings", action="store_true", help="Check/Import Localizable.strings files in the main target")
+    parser.add_argument(
+        "-ms", "--main-target-strings", action="store_true", help="Check/Import Localizable.strings files in the main target"
+    )
     parser.add_argument("-p", "--plural-strings", action="store_true", help="Check/Import Localizable.stringsdict files")
     parser.add_argument("-ip", "--info-plist", action="store_true", help="Check/Import InfoPlist.strings files")
-    
+
     parser.add_argument("-c", "--check-source", action="store_true", help="Check if the project's strings are valid")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose mode")
 
-    parser.add_argument("--config-file", default=CONFIG_FILE_PATH, help="Path to the configuration file (default: ~/.import_loco)")
+    parser.add_argument(
+        "--config-file", default=CONFIG_FILE_PATH, help="Path to the configuration file (default: ~/.import_loco)"
+    )
 
     args = parser.parse_args()
 
