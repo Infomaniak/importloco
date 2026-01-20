@@ -19,3 +19,14 @@ distribution = true
 
 [tool.pdm.scripts]
 import_loco = "python -m import_loco"
+
+[tool.ruff]
+line-length = 130
+
+[tool.ruff.lint]
+ignore = ["F403", "F405"]
+
+[dependency-groups]
+lint = [
+    "ruff>=0.14.13",
+]

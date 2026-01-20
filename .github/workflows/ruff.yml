@@ -1,0 +1,30 @@
+name: Ruff Lint
+
+on:
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Check linting
+    runs-on: [ self-hosted, iOS ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Mise
+        uses: jdx/mise-action@v2
+        with:
+          cache: false
+          experimental: true
+
+      - name: PDM installs dependencies
+        run: pdm install
+
+      - name: Ruff Lint
+        run: pdm run ruff check src/import_loco

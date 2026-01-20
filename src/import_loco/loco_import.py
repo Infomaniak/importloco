@@ -2,9 +2,11 @@ import os
 import shutil
 import sys
 import zipfile
+
 import import_loco.loco_validate as loco_validate
 from import_loco.loco_network import fetch_archive, fetch_tags
 from import_loco.utils import *
+
 
 def validate_and_import_strings(project_config, strategy):
     archive_path = _download_archive(project_config, strategy)
@@ -14,7 +16,7 @@ def validate_and_import_strings(project_config, strategy):
     print_if_verbose("(2/3) Archive extracted.")
 
     _move_files_to_destination(folder_with_strings, project_config, strategy)
-    print_if_verbose("(3/3) Resources updated.\n") 
+    print_if_verbose("(3/3) Resources updated.\n")
 
     error_count = loco_validate.compute_error_count(project_config, strategy)
     loco_validate.show_result(error_count)
@@ -31,11 +33,11 @@ def _download_archive(project_config, strategy):
 def _compute_filters(project_config, strategy):
     if len(project_config.filters) == 0:
         return strategy.filters
-    
+
     all_loco_project_filters = fetch_tags(project_config.loco_api_key)
     filters_to_exclude = [*strategy.filters, *project_config.filters, *FILTERS_TO_IGNORE]
-    not_filters = [ f"!{filter}" for filter in all_loco_project_filters if filter not in filters_to_exclude ]
-    
+    not_filters = [f"!{filter}" for filter in all_loco_project_filters if filter not in filters_to_exclude]
+
     return ",".join([*strategy.filters, *not_filters])
 
 
@@ -44,7 +46,7 @@ def _extract_archive(archive_path):
         shutil.rmtree(TMP_FOLDER)
     os.makedirs(TMP_FOLDER, exist_ok=True)
 
-    with zipfile.ZipFile(archive_path, 'r') as zip_ref:
+    with zipfile.ZipFile(archive_path, "r") as zip_ref:
         zip_ref.extractall(TMP_FOLDER)
 
     files = os.listdir(TMP_FOLDER)

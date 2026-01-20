@@ -1,8 +1,10 @@
-from urllib.request import urlretrieve
 from urllib.parse import urlencode
+from urllib.request import urlretrieve
+
 import requests
 
 BASE_URL = "https://localise.biz/api"
+
 
 def fetch_archive(path, filters, loco_key):
     query_params = _get_default_query_params(filters, loco_key)
@@ -14,7 +16,7 @@ def fetch_archive(path, filters, loco_key):
 def fetch_tags(loco_key):
     endpoint = _create_endpoint("/tags")
 
-    headers = { "Authorization": f"Loco {loco_key}" }
+    headers = {"Authorization": f"Loco {loco_key}"}
     response = requests.get(endpoint, headers=headers)
 
     if response.status_code == 200:
@@ -22,26 +24,22 @@ def fetch_tags(loco_key):
     else:
         return None
 
+
 # -- Utils
 
-def _create_endpoint(path, query_params = None):
+
+def _create_endpoint(path, query_params=None):
     url = f"{BASE_URL}{path}"
     if query_params is not None:
         encoded_query_params = urlencode(query_params)
-        url += f"?%s" % encoded_query_params
+        url += "?%s" % encoded_query_params
 
-    return  url
+    return url
 
 
 def _get_default_query_params(filters, loco_key):
-    query_params = {
-        "fallback": "en",
-        "order": "id",
-        "charset": "utf8",
-        "filter": filters,
-        "key": loco_key
-    }
-    return { key: value for key, value in query_params.items() if value is not None }
+    query_params = {"fallback": "en", "order": "id", "charset": "utf8", "filter": filters, "key": loco_key}
+    return {key: value for key, value in query_params.items() if value is not None}
 
 
 def _download_archive(endpoint):

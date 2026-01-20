@@ -7,7 +7,7 @@ is_verbose = False
 # Constants
 
 TMP_FOLDER = "/tmp/import_loco"
-SUPPORTED_LANGUAGES = ['de', 'en', 'es', 'fr', 'it']
+SUPPORTED_LANGUAGES = ["de", "en", "es", "fr", "it"]
 
 FILTERS_TO_IGNORE = ["android"]
 
@@ -18,8 +18,10 @@ END_TEXT = "\033[0m"
 
 # Functions
 
+
 def print_if_verbose(str):
-    if not is_verbose: return
+    if not is_verbose:
+        return
     print(str)
 
 
@@ -31,6 +33,6 @@ def get_project_root():
     path = os.path.abspath(__file__)
     while path != os.path.dirname(path):
         if os.path.exists(os.path.join(path, "main.py")):
-            return path 
+            return path
         path = os.path.dirname(path)
     return None
