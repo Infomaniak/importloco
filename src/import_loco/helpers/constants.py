@@ -1,4 +1,9 @@
+import os
+
+
 TMP_FOLDER = "/tmp/import_loco"
+CONFIG_FILE_PATH = os.path.expanduser(".import_loco.yml")
+
 SUPPORTED_LANGUAGES = ["de", "en", "es", "fr", "it"]
 
 FILTERS_TO_IGNORE = ["android"]
