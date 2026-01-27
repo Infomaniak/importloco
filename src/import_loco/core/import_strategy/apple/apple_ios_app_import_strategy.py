@@ -13,7 +13,6 @@ MAIN_TARGET_STRINGS_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
     StringsTranslationsParser(),
     "strings.zip",
     "Localizable.strings",
-    use_main_target=True
 )
 
 INFO_PLIST_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
@@ -21,7 +20,6 @@ INFO_PLIST_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
     StringsTranslationsParser(),
     "strings.zip",
     "InfoPlist.strings",
-    use_main_target=True
 )
 
 STRINGS_DICT_LOCO_IMPORT_STRATEGY = LocoImportStrategy(
