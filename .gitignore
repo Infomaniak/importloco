@@ -6,3 +6,4 @@ dist/
 import_loco.spec
 .DS_Store
 .pdm-python
+*.pyc
