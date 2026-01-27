@@ -1,17 +1,16 @@
 import argparse
 import sys
-
-import import_loco.utils as utils
-from import_loco.config import CONFIG_FILE_PATH, get_project_config
-from import_loco.loco_import import validate_and_import_strings
-from import_loco.loco_import_strategy import (
+import import_loco.helpers.utils as utils
+from import_loco.helpers.config import CONFIG_FILE_PATH, get_project_config
+from import_loco.core.loco.loco_import import validate_and_import_strings
+from import_loco.core.import_strategy.loco_import_strategy import (
     INFO_PLIST_LOCO_IMPORT_STRATEGY,
     MAIN_TARGET_STRINGS_LOCO_IMPORT_STRATEGY,
     STRINGS_DICT_LOCO_IMPORT_STRATEGY,
     STRINGS_LOCO_IMPORT_STRATEGY,
 )
-from import_loco.loco_validate import validate_strings
-from import_loco.strings_config import StringsConfig
+from import_loco.core.loco.loco_validate import validate_strings
+from import_loco.core.models.strings_config import StringsConfig
 
 def _run_completion_over_strategies(strategies, project_config, completion):
     has_succeeded = True
@@ -71,7 +70,7 @@ def main():
         utils.is_verbose = True
 
     config_file = parsed_arguments.config_file
-    config = get_project_config(project=project_name, config_file=config_file)
+    config = get_project_config(project="project_name", config_file=config_file)
 
     strings_config = StringsConfig(parsed_arguments)
     strategies = [

@@ -1,10 +1,7 @@
 import re
-import xml.etree.ElementTree as ElementTree
+from xml.etree.ElementTree import ElementTree
 
-
-class TranslationsParser:
-    def parse(self, filename):
-        raise NotImplementedError
+from import_loco.core.parsers.translations_parser import TranslationsParser
 
 
 class StringsTranslationsParser(TranslationsParser):

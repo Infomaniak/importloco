@@ -1,7 +1,7 @@
 import sys
 
 import loco_validator.validator as loco_validator
-from import_loco.utils import *
+from import_loco.helpers.utils import *
 
 
 def validate_strings(project_config, strategy):
