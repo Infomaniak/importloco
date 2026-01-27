@@ -1,7 +1,5 @@
 import argparse
 
-from import_loco.helpers.config import CONFIG_FILE_PATH
-
 
 def _add_parser_arguments(parser: argparse.ArgumentParser):
     parser.add_argument(

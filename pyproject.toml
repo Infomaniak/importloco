@@ -8,7 +8,7 @@ requires-python = ">=3.9"
 readme = "README.md"
 license = {text = "Apache License 2.0"}
 dynamic = ["version"]
-dependencies = ["requests>=2.32.5"]
+dependencies = ["requests>=2.32.5", "pyyaml>=6.0.3"]
 
 [build-system]
 requires = ["pdm-backend"]
