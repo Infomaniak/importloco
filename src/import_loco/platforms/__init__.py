@@ -5,7 +5,7 @@ for creating platform instances.
 """
 
 import logging
-from typing import Dict, Type
+from typing import Any, Dict, Type
 
 from import_loco.core.exceptions import LocoConfigError
 from import_loco.platforms.base import Platform
@@ -21,11 +21,12 @@ _PLATFORM_REGISTRY: Dict[str, Type[Platform]] = {
 }
 
 
-def get_platform(platform_name: str) -> Platform:
+def get_platform(platform_name: str, config: Dict[str, Any]) -> Platform:
     """Get a platform instance by name.
 
     Args:
         platform_name: Name of the platform (e.g., "ios", "macos", "windows", "linux").
+        config: Configuration dictionary for the platform.
 
     Returns:
         Platform instance.
@@ -44,7 +45,7 @@ def get_platform(platform_name: str) -> Platform:
 
     platform_class = _PLATFORM_REGISTRY[platform_name]
     logger.info("Creating platform instance: %s", platform_name)
-    return platform_class()
+    return platform_class(config)
 
 
 def list_available_platforms() -> list[str]:
@@ -67,8 +68,8 @@ def register_platform(platform_class: Type[Platform]) -> None:
     Raises:
         ValueError: If the platform is already registered.
     """
-    # Create a temporary instance to get the name
-    temp_instance = platform_class()
+    # Create a temporary instance to get the name (pass empty config for registration)
+    temp_instance = platform_class({})
     platform_name = temp_instance.name.lower()
 
     if platform_name in _PLATFORM_REGISTRY:

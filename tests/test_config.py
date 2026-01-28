@@ -7,42 +7,11 @@ import pytest
 import yaml
 
 from import_loco.core.config.config import (
-    ProjectConfiguration,
     get_project_config,
     _read_config,
     _ensure_config_file_exist,
 )
 from import_loco.core.exceptions import LocoConfigError
-
-
-def test_project_configuration_initialization():
-    """Test ProjectConfiguration initialization."""
-    config = ProjectConfiguration(
-        localizable_path="/path/to/localizable",
-        main_target_localizable_path="/path/to/main",
-        loco_api_key="test-key-123",
-        filters=["ios", "common"],
-    )
-
-    assert config.localizable_path == "/path/to/localizable"
-    assert config.main_target_localizable_path == "/path/to/main"
-    assert config.loco_api_key == "test-key-123"
-    assert config.filters == ["ios", "common"]
-
-
-def test_project_configuration_with_optional_none():
-    """Test ProjectConfiguration with None for optional fields."""
-    config = ProjectConfiguration(
-        localizable_path="/path/to/localizable",
-        main_target_localizable_path=None,
-        loco_api_key="test-key",
-        filters=[],
-    )
-
-    assert config.localizable_path == "/path/to/localizable"
-    assert config.main_target_localizable_path is None
-    assert config.loco_api_key == "test-key"
-    assert config.filters == []
 
 
 def test_ensure_config_file_exist_raises_error_for_missing_file():

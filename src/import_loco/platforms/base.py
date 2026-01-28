@@ -15,6 +15,14 @@ class Platform(ABC):
     to provide platform-specific behavior for importing and validating translations.
     """
 
+    def __init__(self, config: Dict[str, Any]) -> None:
+        """Initialize the platform with configuration.
+
+        Args:
+            config: Configuration dictionary containing platform-specific settings.
+        """
+        self.config = config
+
     @property
     @abstractmethod
     def name(self) -> str:
@@ -25,13 +33,27 @@ class Platform(ABC):
         """
         pass
 
-    @property
-    @abstractmethod
-    def supported_languages(self) -> List[str]:
+    def get_supported_languages(self) -> List[str]:
         """Get the list of supported language codes for this platform.
+
+        Languages are read from the configuration. If not specified, returns
+        the platform's default languages.
 
         Returns:
             List of language codes (e.g., ["en", "fr", "de"]).
+        """
+        if "languages" in self.config:
+            return self.config["languages"]
+        return self.get_default_languages()
+
+    @abstractmethod
+    def get_default_languages(self) -> List[str]:
+        """Get the default list of supported language codes for this platform.
+
+        This is used when no languages are specified in the configuration.
+
+        Returns:
+            List of default language codes.
         """
         pass
 
