@@ -1,0 +1,28 @@
+# Example configuration file for import_loco
+# Place this file as .import_loco.yml in your project root
+
+# Platform: ios, macos, windows, linux
+platform: ios
+
+# Loco API key - alternatively can be stored in .import_loco_api file
+loco_api_key: your-loco-api-key-here
+
+# Path to localizable files
+localizable_path: /path/to/your/project/Resources
+
+# Optional: Path to main target localizable files (for InfoPlist.strings on iOS)
+# main_target_localizable_path: /path/to/your/project/MainTarget/Resources
+
+# Optional: Supported languages (defaults to de, en, es, fr, it if not specified)
+languages:
+  - en
+  - fr
+  - de
+  - es
+  - it
+  - ja
+
+# Optional: Additional Loco filters to apply
+filters:
+  - common
+  # Prefix with ! to exclude: !android

@@ -33,14 +33,12 @@ class MacOSPlatform(Platform):
         """
         return "macos"
 
-    @property
-    def supported_languages(self) -> List[str]:
-        """Get the list of supported language codes for macOS.
+    def get_default_languages(self) -> List[str]:
+        """Get the default list of supported language codes for macOS.
 
         Returns:
-            List of language codes.
+            List of default language codes.
         """
-        # This will be made configurable in Phase 4
         return ["de", "en", "es", "fr", "it"]
 
     def get_translation_file_path(

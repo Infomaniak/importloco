@@ -6,7 +6,7 @@ application. It supports YAML-based configuration files.
 
 import logging
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import yaml
 
@@ -14,37 +14,6 @@ from import_loco.core.exceptions import LocoConfigError
 from import_loco.helpers.constants import CONFIG_FILE_PATH
 
 logger = logging.getLogger(__name__)
-
-
-class ProjectConfiguration:
-    """Container for project-specific configuration settings.
-
-    Attributes:
-        localizable_path: Path to the project's localizable files.
-        main_target_localizable_path: Optional path to main target localizable files.
-        loco_api_key: API key for accessing the Loco service.
-        filters: List of filters to apply when importing translations.
-    """
-
-    def __init__(
-        self,
-        localizable_path: str,
-        main_target_localizable_path: Optional[str],
-        loco_api_key: str,
-        filters: list[str],
-    ) -> None:
-        """Initialize a ProjectConfiguration instance.
-
-        Args:
-            localizable_path: Path to the project's localizable files.
-            main_target_localizable_path: Optional path to main target localizable files.
-            loco_api_key: API key for accessing the Loco service.
-            filters: List of filters to apply when importing translations.
-        """
-        self.localizable_path = localizable_path
-        self.main_target_localizable_path = main_target_localizable_path
-        self.loco_api_key = loco_api_key
-        self.filters = filters
 
 
 def get_project_config(config_file: str = CONFIG_FILE_PATH) -> Dict[str, Any]:
