@@ -7,3 +7,6 @@ import_loco.spec
 .DS_Store
 .pdm-python
 *.pyc
+.coverage
+.pytest_cache
+htmlcov/
