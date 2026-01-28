@@ -12,6 +12,9 @@ TMP_FOLDER = "/tmp/import_loco"
 # Path to the YAML configuration file
 CONFIG_FILE_PATH = os.path.expanduser(".import_loco.yml")
 
+# API key file name (placed in same directory as config file)
+API_KEY_FILE_PATH = ".import_loco_api"
+
 # List of supported language codes
 SUPPORTED_LANGUAGES = ["de", "en", "es", "fr", "it"]
 

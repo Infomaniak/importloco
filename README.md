@@ -1,56 +1,157 @@
 # Import Loco
 
-Import strings like a noob.
+A modern, multi-platform Python CLI tool for importing localized strings from [Loco](https://localise.biz/) translation management platform into iOS, macOS, Windows, and Linux projects.
 
-Designed by ~~Apple~~ iOS team in ~~California~~ Geneva. Inspired by [Ink](https://github.com/Infomaniak/ink_utils).
+## Features
 
-## Install the script
+- 🌍 **Multi-Platform Support**: iOS, macOS, Windows, and Linux
+- 📝 **Multiple File Formats**: .strings, .stringsdict, .resx, .po
+- ⚙️ **Flexible Configuration**: YAML-based with environment variable support
+- 🔒 **Secure API Key Management**: Separate file or environment variable
+- ✨ **Modern Python**: Type hints, comprehensive logging, and error handling
+- 🧪 **Well-Tested**: >80% test coverage with 102+ tests
 
-### Python dependencies
+## Quick Start
 
-Import Loco requires one dependency.
+### 1. Create Configuration
+
+Create `.import_loco.yml` in your project root:
+```yaml
+platform: ios
+localizable_path: /path/to/Resources
+languages: [en, fr, de]
+```
+
+### 2. Set API Key
+
+Choose one method:
 ```bash
-$ pip3 install requests==2.28.2
+# Environment variable (recommended for CI/CD)
+export LOCO_API_KEY="your-api-key"
+
+# Or create .import_loco_api file (recommended for local dev)
+echo "your-api-key" > .import_loco_api
 ```
 
-### Configuration file
+### 3. Run Import
 
-Import Loco needs a configuration file to set up your projects.
-You need to create a file in your home directory with the name `.import_loco`.
 ```bash
-$ touch ~/.import_loco
+python -m import_loco         # Import all resources
+python -m import_loco -v      # Verbose mode
+python -m import_loco -r strings  # Import specific resource
 ```
-For each project, add these lines with the values corresponding to your setup:
+
+## Platform Support
+
+| Platform | File Format | Example Path |
+|----------|-------------|--------------|
+| iOS | .strings, .stringsdict | en.lproj/Localizable.strings |
+| macOS | .strings, .stringsdict | en.lproj/Localizable.strings |
+| Windows | .resx | Resources.en.resx |
+| Linux | .po | en/LC_MESSAGES/messages.po |
+
+## Configuration Examples
+
+### iOS/macOS
+```yaml
+platform: ios
+localizable_path: /path/to/Resources
+main_target_localizable_path: /path/to/MainTarget  # iOS only
+languages: [en, fr, de, es]
+filters: [common]  # Optional Loco filters
 ```
-[project_name]
-localizable_path = /Users/.../project/.../Localizable
-main_target_localizable_path = /Users/.../project/.../Localizable
+
+### Windows
+```yaml
+platform: windows
+localizable_path: /path/to/Resources
+languages: [en, fr, de]
+```
+
+### Linux
+```yaml
+platform: linux
+localizable_path: /path/to/locale
+domain: myapp  # Optional, defaults to "messages"
+languages: [en, fr, de]
+```
+
+## API Key Priority
+
+1. Environment variable `LOCO_API_KEY`
+2. File `.import_loco_api` (in same directory as config)
+3. Config file field `loco_api_key`
+
+## Command-Line Options
+
+```
+python -m import_loco [OPTIONS]
+
+Options:
+  -r, --resource TYPE    Import specific resource type
+  -c, --check           Validate without importing
+  -v, --verbose         Enable debug logging
+  -h, --help           Show help
+```
+
+## Installation
+
+```bash
+git clone https://github.com/Infomaniak/importloco.git
+cd importloco
+pip install -e .
+```
+
+### Requirements
+- Python 3.9+
+- requests>=2.32.5
+- pyyaml>=6.0.3
+
+## Development
+
+```bash
+# Run tests
+python -m pytest tests/
+
+# Run with coverage
+python -m pytest tests/ --cov=src/import_loco
+
+# Linting
+python -m ruff check src/import_loco/
+```
+
+## Migration from Old Format
+
+### Old (`.import_loco`)
+```ini
+[project]
+localizable_path = /path
 loco_key = xxx
-filters = !common
 ```
 
-- `project_localizable`: Absolute path to the project's localizable files.
-- `main_target_localizable_path` *(Optional)*: Absolute path to the localizable files of the main target of the app. Required to import InfoPlist files.
-- `loco_key`: Loco API key.
-- `filters` *(Optional)*: Additional filters for the project.
-
-## Execute the script
-
-To run the script, simply execute the following line in a terminal.
-The project name corresponds to the one you added in the `.import_loco` file.
-```bash
-$ python3 path_to_script/importLoco/main.py {project_name}
+### New (`.import_loco.yml`)
+```yaml
+platform: ios
+localizable_path: /path
+# Move API key to .import_loco_api file
 ```
 
-You can create an alias in your `.bashrc` to make life easier.
-```bash
-alias import_loco="python3 path_to_script/importLoco/main.py"
-```
+## Troubleshooting
 
-Then you can call the script as follows:
-```bash
-import_loco {project_name}
-```
+**Configuration file not found**
+- Create `.import_loco.yml` in project root
+
+**API key missing**
+- Set `LOCO_API_KEY` env var or create `.import_loco_api` file
+
+**Unsupported platform**
+- Use: `ios`, `macos`, `windows`, or `linux`
+
+## Credits
+
+Designed by the iOS team at Infomaniak in Geneva, Switzerland.
+
+Inspired by [Ink](https://github.com/Infomaniak/ink_utils).
 
 ---
 

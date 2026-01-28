@@ -10,3 +10,5 @@ import_loco.spec
 .coverage
 .pytest_cache
 htmlcov/
+.import_loco_api
+.import_loco.yml
