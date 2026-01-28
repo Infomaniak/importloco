@@ -10,8 +10,74 @@ from import_loco.core.config.config import (
     get_project_config,
     _read_config,
     _ensure_config_file_exist,
+    _load_api_key,
 )
 from import_loco.core.exceptions import LocoConfigError
+
+
+def test_load_api_key_from_environment(monkeypatch):
+    """Test loading API key from environment variable."""
+    monkeypatch.setenv("LOCO_API_KEY", "env-api-key")
+    
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config_file = os.path.join(tmpdir, ".import_loco.yml")
+        api_key = _load_api_key(config_file)
+        
+        assert api_key == "env-api-key"
+
+
+def test_load_api_key_from_file():
+    """Test loading API key from .import_loco_api file."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config_file = os.path.join(tmpdir, ".import_loco.yml")
+        api_key_file = os.path.join(tmpdir, ".import_loco_api")
+        
+        with open(api_key_file, "w") as f:
+            f.write("file-api-key")
+        
+        api_key = _load_api_key(config_file)
+        assert api_key == "file-api-key"
+
+
+def test_load_api_key_env_takes_priority(monkeypatch):
+    """Test that environment variable takes priority over file."""
+    monkeypatch.setenv("LOCO_API_KEY", "env-api-key")
+    
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config_file = os.path.join(tmpdir, ".import_loco.yml")
+        api_key_file = os.path.join(tmpdir, ".import_loco_api")
+        
+        with open(api_key_file, "w") as f:
+            f.write("file-api-key")
+        
+        api_key = _load_api_key(config_file)
+        assert api_key == "env-api-key"
+
+
+def test_load_api_key_returns_none_when_not_found():
+    """Test that _load_api_key returns None when no key is found."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config_file = os.path.join(tmpdir, ".import_loco.yml")
+        api_key = _load_api_key(config_file)
+        
+        assert api_key is None
+
+
+def test_get_project_config_with_api_key_from_file():
+    """Test that get_project_config loads API key from file."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config_file = os.path.join(tmpdir, ".import_loco.yml")
+        api_key_file = os.path.join(tmpdir, ".import_loco_api")
+        
+        with open(config_file, "w") as f:
+            yaml.dump({"platform": "ios", "localizable_path": "/tmp"}, f)
+        
+        with open(api_key_file, "w") as f:
+            f.write("test-api-key")
+        
+        config = get_project_config(config_file)
+        
+        assert config["loco_api_key"] == "test-api-key"
 
 
 def test_ensure_config_file_exist_raises_error_for_missing_file():
