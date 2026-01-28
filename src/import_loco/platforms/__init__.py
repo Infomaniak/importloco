@@ -10,7 +10,9 @@ from typing import Any, Dict, Type
 from import_loco.core.exceptions import LocoConfigError
 from import_loco.platforms.base import Platform
 from import_loco.platforms.ios import IOSPlatform
+from import_loco.platforms.linux import LinuxPlatform
 from import_loco.platforms.macos import MacOSPlatform
+from import_loco.platforms.windows import WindowsPlatform
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +20,8 @@ logger = logging.getLogger(__name__)
 _PLATFORM_REGISTRY: Dict[str, Type[Platform]] = {
     "ios": IOSPlatform,
     "macos": MacOSPlatform,
+    "windows": WindowsPlatform,
+    "linux": LinuxPlatform,
 }
 
 
