@@ -8,7 +8,7 @@ from import_loco.core.exceptions import LocoConfigError
 from import_loco.core.parsers.resx_parser import ResxTranslationsParser
 from import_loco.core.parsers.po_parser import PoTranslationsParser
 from import_loco.platforms import get_platform, list_available_platforms
-from import_loco.platforms.windows import WindowsPlatform
+from import_loco.core.platforms.windows import WindowsPlatform
 from import_loco.platforms.linux import LinuxPlatform
 
 
@@ -40,7 +40,7 @@ class TestWindowsPlatform:
         platform = WindowsPlatform({})
         path = platform.get_translation_file_path("/base/path", "en", "resx")
         assert path == "/base/path/Resources.resx"
-        
+
         path_fr = platform.get_translation_file_path("/base/path", "fr", "resx")
         assert path_fr == "/base/path/Resources.fr.resx"
 
@@ -86,10 +86,10 @@ class TestWindowsPlatform:
         """Test configuration validation with missing required field."""
         platform = WindowsPlatform({})
         config = {"localizable_path": "/path/to/resources"}
-        
+
         with pytest.raises(LocoConfigError) as exc_info:
             platform.validate_configuration(config)
-        
+
         assert "loco_api_key" in str(exc_info.value)
 
     def test_validate_configuration_valid(self):
@@ -100,7 +100,7 @@ class TestWindowsPlatform:
                 "loco_api_key": "test-key-123",
             }
             platform = WindowsPlatform(config)
-            
+
             # Should not raise
             platform.validate_configuration(config)
 
@@ -182,10 +182,10 @@ class TestLinuxPlatform:
         """Test configuration validation with missing required field."""
         platform = LinuxPlatform({})
         config = {"localizable_path": "/path/to/locale"}
-        
+
         with pytest.raises(LocoConfigError) as exc_info:
             platform.validate_configuration(config)
-        
+
         assert "loco_api_key" in str(exc_info.value)
 
     def test_validate_configuration_valid(self):
@@ -196,7 +196,7 @@ class TestLinuxPlatform:
                 "loco_api_key": "test-key-456",
             }
             platform = LinuxPlatform(config)
-            
+
             # Should not raise
             platform.validate_configuration(config)
 
