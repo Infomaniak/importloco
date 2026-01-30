@@ -9,7 +9,6 @@ from import_loco.platforms.windows import WindowsPlatform
 
 logger = logging.getLogger(__name__)
 
-# Registry of available platforms
 _PLATFORM_REGISTRY: Dict[str, Type[Platform]] = {
     "ios": IOSPlatform,
     "macos": MacOSPlatform,

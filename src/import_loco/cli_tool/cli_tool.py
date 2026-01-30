@@ -11,7 +11,7 @@ from import_loco.cli_tool import arguments_parser
 from import_loco.core.config.config import get_project_config
 from import_loco.core.exceptions import LocoError
 from import_loco.core.loco.platform_import import import_translations
-from import_loco.platforms import get_platform
+from import_loco.platforms.platform_registry import get_platform
 import import_loco.helpers.utils as utils
 
 logger = logging.getLogger(__name__)
