@@ -40,7 +40,7 @@ class Platform(ABC):
         pass
 
     @abstractmethod
-    def get_destination_folder_path(self, language: str, resource_type: str) -> str:
+    def get_destination_file_path(self, language: str, resource_type: str) -> str:
         pass
 
     @abstractmethod

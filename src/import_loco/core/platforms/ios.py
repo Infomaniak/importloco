@@ -12,42 +12,11 @@ from import_loco.core.platforms.base import Platform
 logger = logging.getLogger(__name__)
 
 
+def _get_folder_name(language) -> str:
+    return f"{language}.lproj"
+
+
 class IOSPlatform(Platform):
-    def get_default_languages(self) -> List[str]:
-        return ["en", "fr", "it", "es", "de"]
-
-    def get_resource_types(self) -> List[str]:
-        return ["strings", "stringsdict", "infoplist"]
-
-    def get_parser_for_resource_type(self, resource_type: str) -> Any:
-        if resource_type in ["strings", "infoplist"]:
-            return StringsTranslationsParser()
-        elif resource_type == "stringsdict":
-            return StringsDictTranslationsParser()
-        else:
-            raise ValueError(f"Unsupported resource type for iOS: {resource_type}")
-
-    def get_loco_filters(self, resource_type: str) -> List[str]:
-        if resource_type == "strings":
-            return ["ios"]
-        elif resource_type == "stringsdict":
-            return ["ios-stringsdict"]
-        elif resource_type == "infoplist":
-            return ["ios-info-plist"]
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
-
-    def get_loco_filters_to_ignore(self, resource_type: str) -> List[str]:
-        return ["android"]
-
-    def get_archive_endpoint(self, resource_type: str) -> str:
-        if resource_type in ["strings", "infoplist"]:
-            return "strings.zip"
-        elif resource_type == "stringsdict":
-            return "stringsdict.zip"
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
-
     def validate_configuration(self, config: Dict[str, Any]) -> None:
         required_fields = ["localizable_path", "loco_api_key"]
 
@@ -67,30 +36,78 @@ class IOSPlatform(Platform):
 
         logger.debug("iOS configuration validated successfully")
 
-    def get_source_file_path(self, language: str, resource_type: str) -> str:
-        language_folder = f"{language}.lproj"
+    def get_default_languages(self) -> List[str]:
+        return ["en", "fr", "it", "es", "de"]
+
+    def get_resource_types(self) -> List[str]:
+        return ["strings", "main_target_strings", "stringsdict", "infoplist"]
+
+    def get_parser_for_resource_type(self, resource_type: str) -> Any:
+        if resource_type in ["strings", "main_target_strings", "infoplist"]:
+            return StringsTranslationsParser()
+        elif resource_type == "stringsdict":
+            return StringsDictTranslationsParser()
+        else:
+            raise ValueError(f"Unsupported resource type: {resource_type}")
+
+    def get_loco_filters(self, resource_type: str) -> List[str]:
         if resource_type == "strings":
+            return ["ios"]
+        elif resource_type == "main_target_strings":
+            return ["ios-main-target"]
+        elif resource_type == "stringsdict":
+            return ["ios-stringsdict"]
+        elif resource_type == "infoplist":
+            return ["ios-info-plist"]
+        else:
+            raise ValueError(f"Unsupported resource type: {resource_type}")
+
+    def get_loco_filters_to_ignore(self, resource_type: str) -> List[str]:
+        return ["android"]
+
+    def get_archive_endpoint(self, resource_type: str) -> str:
+        if resource_type in ["strings", "main_target_strings", "infoplist"]:
+            return "strings.zip"
+        elif resource_type == "stringsdict":
+            return "stringsdict.zip"
+        else:
+            raise ValueError(f"Unsupported resource type: {resource_type}")
+
+    def get_source_file_path(self, language: str, resource_type: str) -> str:
+        language_folder = _get_folder_name(language)
+
+        if resource_type in ["strings", "main_target_strings", "infoplist"]:
             return f"{language_folder}/Localizable.strings"
         elif resource_type == "stringsdict":
             return f"{language_folder}/Localizable.stringsdict"
-        elif resource_type == "infoplist":
-            return f"{language_folder}/InfoPlist.strings"
         else:
-            raise ValueError(f"Unsupported resource type for iOS: {resource_type}")
+            raise ValueError(f"Unsupported resource type: {resource_type}")
 
-    def get_destination_folder_path(self, language: str, resource_type: str) -> str:
-        language_folder = f"{language}.lproj"
+    def get_destination_file_path(self, language: str, resource_type: str) -> str:
+        language_folder = _get_folder_name(language)
+
         if resource_type in ["strings", "stringsdict"]:
-            return f"{self.config.get('localizable_path', '')}/{language_folder}/"
-        elif resource_type == "infoplist":
-            return f"{self.config.get('main_target_localizable_path', '')}/{language_folder}"
+            destination_folder = self.config.get("localizable_path", "")
+        elif resource_type in ["main_target_strings", "infoplist"]:
+            destination_folder = self.config.get("main_target_localizable_path", "")
         else:
-            raise ValueError(f"Unsupported resource type for iOS: {resource_type}")
+            raise ValueError(f"Unsupported resource type: {resource_type}")
+
+        if resource_type in ["strings", "main_target_strings"]:
+            filename = "Localizable.strings"
+        elif resource_type == "stringsdict":
+            filename = "Localizable.stringsdict"
+        elif resource_type == "infoplist":
+            filename = "InfoPlist.strings"
+        else:
+            raise ValueError(f"Unsupported resource type: {resource_type}")
+
+        return f"{destination_folder}/{language_folder}/{filename}"
 
     def should_import_resource(self, resource_type: str) -> str:
         if resource_type in ["strings", "stringsdict"]:
             return self.config.get("localizable_path", "") != ""
-        elif resource_type == "infoplist":
+        elif resource_type in ["main_target_strings", "infoplist"]:
             return self.config.get("main_target_localizable_path", "") != ""
         else:
             raise ValueError(f"Unsupported resource type: {resource_type}")
