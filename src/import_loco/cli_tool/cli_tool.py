@@ -12,7 +12,6 @@ from import_loco.core.config.config import get_project_config
 from import_loco.core.exceptions import LocoError
 from import_loco.core.loco.platform_import import import_translations
 from import_loco.platforms.platform_registry import get_platform
-import import_loco.helpers.utils as utils
 
 logger = logging.getLogger(__name__)
 
@@ -20,14 +19,13 @@ logger = logging.getLogger(__name__)
 def run_tool() -> None:
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        format="%(levelname)s - %(message)s",
     )
 
     try:
         arguments = arguments_parser.parse_arguments()
 
         if arguments.verbose:
-            utils.is_verbose = True
             logging.getLogger().setLevel(logging.DEBUG)
             logger.debug("Verbose mode enabled")
 
@@ -67,14 +65,11 @@ def run_tool() -> None:
             sys.exit(1)
 
     except LocoError as e:
-        logger.error("Import failed: %s", e)
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
     except KeyboardInterrupt:
-        logger.info("Import cancelled by user")
         print("\nImport cancelled.", file=sys.stderr)
         sys.exit(130)
     except Exception as e:
-        logger.exception("Unexpected error: %s", e)
         print(f"Unexpected error: {e}", file=sys.stderr)
         sys.exit(1)
