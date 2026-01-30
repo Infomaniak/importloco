@@ -51,14 +51,10 @@ def run_tool() -> None:
             else:
                 resources_to_import = platform.get_resource_types()
 
-        all_success = True
         for resource_type in resources_to_import:
             logger.info("Importing resource type: %s", resource_type)
             try:
-                success = import_translations(platform, resource_type)
-                if not success:
-                    all_success = False
-                    logger.warning("Import completed with validation errors for: %s", resource_type)
+                import_translations(platform, resource_type)
             except Exception as e:
                 logger.error("Failed to import %s: %s", resource_type, e)
                 all_success = False
