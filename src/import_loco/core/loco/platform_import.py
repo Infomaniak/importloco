@@ -5,7 +5,7 @@ import zipfile
 
 from import_loco.core.exceptions import LocoParserError, LocoNetworkError
 from import_loco.core.loco.loco_network import fetch_archive, fetch_tags
-from import_loco.helpers.constants import TMP_FOLDER
+from import_loco.helpers.constants import TMP_FOLDER, BOLD_TEXT, END_TEXT
 from import_loco.core.platforms.base import Platform
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ def import_translations(platform: Platform, resource_type: str) -> None:
     if resource_type not in platform.get_resource_types():
         raise ValueError(f"Resource type '{resource_type}' not supported by platform")
 
-    print(f"Starting import {resource_type}")
+    print(f"{BOLD_TEXT}Starting import {resource_type}{END_TEXT}")
 
     archive_path = _download_archive(platform, resource_type)
     print(f"(1/3) {resource_type} archive downloaded from Loco.")
@@ -24,7 +24,7 @@ def import_translations(platform: Platform, resource_type: str) -> None:
     print("(2/3) Archive extracted.")
 
     _move_files_to_destination(platform, folder_with_strings, resource_type)
-    print("(3/3) Resources updated.")
+    print("(3/3) Resources updated.\n")
 
 
 def _download_archive(platform: Platform, resource_type: str) -> str:
@@ -87,11 +87,13 @@ def _move_files_to_destination(platform: Platform, folder: str, resource_type: s
 
     for language in languages:
         source_file = platform.get_source_file_path(language, resource_type)
-        destination_folder = platform.get_destination_folder_path(language, resource_type)
+        destination_path = platform.get_destination_file_path(language, resource_type)
 
-        destination_dir = os.path.dirname(destination_folder)
+        destination_dir = os.path.dirname(destination_path)
         os.makedirs(destination_dir, exist_ok=True)
 
+        logger.debug("Moving %s to %s", source_file, destination_path)
+
         source_path = os.path.join(folder, source_file)
-        shutil.copy(source_path, destination_dir)
-        logger.debug("Copied %s to %s", source_path, destination_dir)
+        shutil.copy2(source_path, destination_path)
+        logger.debug("Copied %s to %s", source_path, destination_path)
