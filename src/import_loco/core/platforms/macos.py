@@ -13,10 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class MacOSPlatform(Platform):
-    @property
-    def name(self) -> str:
-        return "macOS"
-
     def get_default_languages(self) -> List[str]:
         return ["en", "fr", "it", "es", "de"]
 

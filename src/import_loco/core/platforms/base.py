@@ -6,11 +6,6 @@ class Platform(ABC):
     def __init__(self, config: Dict[str, Any]) -> None:
         self.config = config
 
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        pass
-
     def get_supported_languages(self) -> List[str]:
         if "languages" in self.config:
             return self.config["languages"]
