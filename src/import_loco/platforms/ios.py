@@ -69,7 +69,7 @@ class IOSPlatform(Platform):
             if main_target_path and not os.path.exists(main_target_path):
                 logger.warning("Main target localizable path does not exist: %s", main_target_path)
 
-        logger.info("iOS configuration validated successfully")
+        logger.debug("iOS configuration validated successfully")
 
     def get_source_file_path(self, language: str, resource_type: str) -> str:
         language_folder = f"{language}.lproj"

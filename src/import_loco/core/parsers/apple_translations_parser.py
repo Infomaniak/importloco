@@ -24,13 +24,11 @@ class StringsTranslationsParser(TranslationsParser):
                         except ValueError:
                             logger.warning("Skipping malformed line %d in %s: %s", line_num, filename, line.strip())
 
-            logger.info("Successfully parsed %d strings from %s", len(data), filename)
+            logger.debug("Successfully parsed %d strings from %s", len(data), filename)
             return data
         except FileNotFoundError:
-            logger.error("Strings file not found: %s", filename)
             raise LocoParserError(f"Strings file not found: {filename}")
         except Exception as e:
-            logger.error("Failed to parse strings file %s: %s", filename, e)
             raise LocoParserError(f"Failed to parse strings file {filename}: {e}")
 
 
@@ -71,14 +69,11 @@ class StringsDictTranslationsParser(TranslationsParser):
 
                 key_index += 2
 
-            logger.info("Successfully parsed %d plural forms from %s", len(data), filename)
+            logger.debug("Successfully parsed %d plural forms from %s", len(data), filename)
             return data
         except FileNotFoundError:
-            logger.error("Stringsdict file not found: %s", filename)
             raise LocoParserError(f"Stringsdict file not found: {filename}")
         except ParseError as e:
-            logger.error("Failed to parse XML in %s: %s", filename, e)
             raise LocoParserError(f"Invalid XML in stringsdict file {filename}: {e}")
         except Exception as e:
-            logger.error("Failed to parse stringsdict file %s: %s", filename, e)
             raise LocoParserError(f"Failed to parse stringsdict file {filename}: {e}")
