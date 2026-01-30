@@ -1,49 +1,27 @@
-import os
 import logging
-from typing import Any, Dict, List
 
-from import_loco.core.exceptions import LocoConfigError
 from import_loco.core.parsers.resx_parser import ResxTranslationsParser
 from import_loco.core.platforms.base import Platform
+from import_loco.core.platforms.resource_type_config import ResourceTypeConfig
 
 logger = logging.getLogger(__name__)
 
 
 class WindowsPlatform(Platform):
-    def get_default_languages(self) -> List[str]:
-        return ["en", "fr", "it", "es", "de"]
+    resource_type_configs = {
+        "resx": ResourceTypeConfig(
+            name="resx",
+            parser_class=ResxTranslationsParser,
+            loco_filters=["windows"],
+            archive_endpoint="resx.zip",
+            source_filename="Resources.{language}.resx",
+            destination_filename="Resources.{language}.resx",
+            config_key="localizable_path",
+        ),
+    }
 
-    def get_resource_types(self) -> List[str]:
-        return ["resx"]
+    def _format_source_path(self, language: str, filename: str) -> str:
+        return filename.format(language=language)
 
-    def get_parser_for_resource_type(self, resource_type: str) -> Any:
-        if resource_type == "resx":
-            return ResxTranslationsParser()
-        else:
-            raise ValueError(f"Unsupported resource type for Windows: {resource_type}")
-
-    def get_loco_filters(self, resource_type: str) -> List[str]:
-        if resource_type == "resx":
-            return ["windows"]
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
-
-    def get_archive_endpoint(self, resource_type: str) -> str:
-        if resource_type == "resx":
-            return "resx.zip"
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
-
-    def validate_configuration(self, config: Dict[str, Any]) -> None:
-        required_fields = ["localizable_path", "loco_api_key"]
-
-        for field in required_fields:
-            if field not in config:
-                logger.error("Missing required field in Windows config: %s", field)
-                raise LocoConfigError(f"Missing required field for Windows platform: {field}")
-
-        localizable_path = config["localizable_path"]
-        if not os.path.exists(localizable_path):
-            logger.warning("Localizable path does not exist: %s", localizable_path)
-
-        logger.debug("Windows configuration validated successfully")
+    def _format_destination_path(self, language: str, filename: str) -> str:
+        return filename.format(language=language)

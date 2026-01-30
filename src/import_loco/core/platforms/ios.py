@@ -1,113 +1,63 @@
 import logging
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict
 
-from import_loco.core.exceptions import LocoConfigError
 from import_loco.core.parsers.apple_translations_parser import (
-    StringsTranslationsParser,
     StringsDictTranslationsParser,
+    StringsTranslationsParser,
 )
-from import_loco.core.platforms.base import Platform
+from import_loco.core.platforms.apple import ApplePlatform
+from import_loco.core.platforms.resource_type_config import ResourceTypeConfig
 
 logger = logging.getLogger(__name__)
 
 
-def _get_folder_name(language) -> str:
-    return f"{language}.lproj"
+class IOSPlatform(ApplePlatform):
+    resource_type_configs = {
+        "strings": ResourceTypeConfig(
+            name="strings",
+            parser_class=StringsTranslationsParser,
+            loco_filters=["ios"],
+            loco_filters_to_ignore=["android"],
+            archive_endpoint="strings.zip",
+            source_filename="Localizable.strings",
+            destination_filename="Localizable.strings",
+            config_key="localizable_path",
+        ),
+        "main_target_strings": ResourceTypeConfig(
+            name="main_target_strings",
+            parser_class=StringsTranslationsParser,
+            loco_filters=["ios-main-target"],
+            loco_filters_to_ignore=["android"],
+            archive_endpoint="strings.zip",
+            source_filename="Localizable.strings",
+            destination_filename="Localizable.strings",
+            config_key="main_target_localizable_path",
+        ),
+        "stringsdict": ResourceTypeConfig(
+            name="stringsdict",
+            parser_class=StringsDictTranslationsParser,
+            loco_filters=["ios-stringsdict"],
+            loco_filters_to_ignore=["android"],
+            archive_endpoint="stringsdict.zip",
+            source_filename="Localizable.stringsdict",
+            destination_filename="Localizable.stringsdict",
+            config_key="localizable_path",
+        ),
+        "infoplist": ResourceTypeConfig(
+            name="infoplist",
+            parser_class=StringsTranslationsParser,
+            loco_filters=["ios-info-plist"],
+            loco_filters_to_ignore=["android"],
+            archive_endpoint="strings.zip",
+            source_filename="Localizable.strings",
+            destination_filename="InfoPlist.strings",
+            config_key="main_target_localizable_path",
+        ),
+    }
 
-
-class IOSPlatform(Platform):
-    def validate_configuration(self, config: Dict[str, Any]) -> None:
-        required_fields = ["localizable_path", "loco_api_key"]
-
-        for field in required_fields:
-            if field not in config:
-                logger.error("Missing required field in iOS config: %s", field)
-                raise LocoConfigError(f"Missing required field for iOS platform: {field}")
-
-        localizable_path = config["localizable_path"]
-        if not os.path.exists(localizable_path):
-            logger.warning("Localizable path does not exist: %s", localizable_path)
-
+    def _validate_platform_specific(self, config: Dict[str, Any]) -> None:
         if "main_target_localizable_path" in config:
             main_target_path = config["main_target_localizable_path"]
             if main_target_path and not os.path.exists(main_target_path):
                 logger.warning("Main target localizable path does not exist: %s", main_target_path)
-
-        logger.debug("iOS configuration validated successfully")
-
-    def get_default_languages(self) -> List[str]:
-        return ["en", "fr", "it", "es", "de"]
-
-    def get_resource_types(self) -> List[str]:
-        return ["strings", "main_target_strings", "stringsdict", "infoplist"]
-
-    def get_parser_for_resource_type(self, resource_type: str) -> Any:
-        if resource_type in ["strings", "main_target_strings", "infoplist"]:
-            return StringsTranslationsParser()
-        elif resource_type == "stringsdict":
-            return StringsDictTranslationsParser()
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
-
-    def get_loco_filters(self, resource_type: str) -> List[str]:
-        if resource_type == "strings":
-            return ["ios"]
-        elif resource_type == "main_target_strings":
-            return ["ios-main-target"]
-        elif resource_type == "stringsdict":
-            return ["ios-stringsdict"]
-        elif resource_type == "infoplist":
-            return ["ios-info-plist"]
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
-
-    def get_loco_filters_to_ignore(self, resource_type: str) -> List[str]:
-        return ["android"]
-
-    def get_archive_endpoint(self, resource_type: str) -> str:
-        if resource_type in ["strings", "main_target_strings", "infoplist"]:
-            return "strings.zip"
-        elif resource_type == "stringsdict":
-            return "stringsdict.zip"
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
-
-    def get_source_file_path(self, language: str, resource_type: str) -> str:
-        language_folder = _get_folder_name(language)
-
-        if resource_type in ["strings", "main_target_strings", "infoplist"]:
-            return f"{language_folder}/Localizable.strings"
-        elif resource_type == "stringsdict":
-            return f"{language_folder}/Localizable.stringsdict"
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
-
-    def get_destination_file_path(self, language: str, resource_type: str) -> str:
-        language_folder = _get_folder_name(language)
-
-        if resource_type in ["strings", "stringsdict"]:
-            destination_folder = self.config.get("localizable_path", "")
-        elif resource_type in ["main_target_strings", "infoplist"]:
-            destination_folder = self.config.get("main_target_localizable_path", "")
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
-
-        if resource_type in ["strings", "main_target_strings"]:
-            filename = "Localizable.strings"
-        elif resource_type == "stringsdict":
-            filename = "Localizable.stringsdict"
-        elif resource_type == "infoplist":
-            filename = "InfoPlist.strings"
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
-
-        return f"{destination_folder}/{language_folder}/{filename}"
-
-    def should_import_resource(self, resource_type: str) -> str:
-        if resource_type in ["strings", "stringsdict"]:
-            return self.config.get("localizable_path", "") != ""
-        elif resource_type in ["main_target_strings", "infoplist"]:
-            return self.config.get("main_target_localizable_path", "") != ""
-        else:
-            raise ValueError(f"Unsupported resource type: {resource_type}")
