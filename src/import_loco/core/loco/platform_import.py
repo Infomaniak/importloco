@@ -79,19 +79,21 @@ def _extract_archive(archive_path: str) -> str:
         logger.error("Extracted archive is empty or has unexpected structure")
         raise LocoParserError("Impossible to find extracted archive. Archive may be empty or malformed.")
 
-    logger.info("Successfully extracted archive to %s/%s", TMP_FOLDER, directories[0])
-    return directories[0]
+    folder_path = f"{TMP_FOLDER}/{directories[0]}"
+    logger.info("Successfully extracted archive to %s", folder_path)
+    return folder_path
 
 
 def _move_files_to_destination(platform: Platform, folder: str, resource_type: str) -> None:
     languages = platform.get_supported_languages()
 
     for language in languages:
-        source_file = platform.get_source_file_path(folder, language, resource_type)
+        source_file = platform.get_source_file_path(language, resource_type)
         destination_folder = platform.get_destination_folder_path(language, resource_type)
 
         destination_dir = os.path.dirname(destination_folder)
         os.makedirs(destination_dir, exist_ok=True)
 
-        shutil.copy(source_file, destination_dir)
-        logger.info("Copied %s to %s", source_file, destination_dir)
+        source_path = os.path.join(folder, source_file)
+        shutil.copy(source_path, destination_dir)
+        logger.info("Copied %s to %s", source_path, destination_dir)
