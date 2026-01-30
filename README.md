@@ -1,157 +1,155 @@
 # Import Loco
 
-A modern, multi-platform Python CLI tool for importing localized strings from [Loco](https://localise.biz/) translation management platform into iOS, macOS, Windows, and Linux projects.
+Your friendly neighborhood localization importer! A modern Python CLI tool that fetches your localized strings
+from [Loco](https://localise.biz/) and drops them right into your iOS, macOS, or Windows project. No fuss, no muss.
 
-## Features
+## What's in the Box?
 
-- 🌍 **Multi-Platform Support**: iOS, macOS, Windows, and Linux
-- 📝 **Multiple File Formats**: .strings, .stringsdict, .resx, .po
-- ⚙️ **Flexible Configuration**: YAML-based with environment variable support
-- 🔒 **Secure API Key Management**: Separate file or environment variable
-- ✨ **Modern Python**: Type hints, comprehensive logging, and error handling
-- 🧪 **Well-Tested**: >80% test coverage with 102+ tests
+- **Multi-Platform Love**: iOS, macOS, and Windows are all invited to the party
+- **All the Formats**: `.strings`, `.stringsdict`, and `.resx` — we speak your language(s)
+- **Validation Superpowers**: Catches typos, wrong punctuation, and those sneaky straight apostrophes before they reach production
+- **YAML Config**: Because life's too short for INI files
+- **Secure by Default**: API keys stay safe in env vars or separate files
 
 ## Quick Start
 
-### 1. Create Configuration
+### 1. Install
 
-Create `.import_loco.yml` in your project root:
-```yaml
-platform: ios
-localizable_path: /path/to/Resources
-languages: [en, fr, de]
+## With mise
+
+```bash
+mise install pipx@latest
+pipx install pipx:infomaniak/importloco
 ```
 
-### 2. Set API Key
+### 2. Configure
 
-Choose one method:
+Create `.import_loco.yml` in your project root:
+
+```yaml
+platform: ios
+localizable_path: /path/to/your/Resources
+languages: [ en, fr, de, es, it ]
+```
+
+### 3. Set Your API Key
+
+Pick your favorite method:
+
 ```bash
-# Environment variable (recommended for CI/CD)
+# Environment variable (great for CI/CD)
 export LOCO_API_KEY="your-api-key"
 
-# Or create .import_loco_api file (recommended for local dev)
+# Or a dedicated file (nice for local dev)
 echo "your-api-key" > .import_loco_api
 ```
 
-### 3. Run Import
+### 4. Import!
 
 ```bash
-python -m import_loco         # Import all resources
-python -m import_loco -v      # Verbose mode
-python -m import_loco -r strings  # Import specific resource
+import_loco                            # Import everything
+import_loco -r strings                 # Just .strings files
+import_loco -r strings -r stringsdict  # .strings and .stringsdict files
+import_loco -c                         # Validate only (no import)
+import_loco -v                         # Verbose mode for the curious
 ```
 
 ## Platform Support
 
-| Platform | File Format | Example Path |
-|----------|-------------|--------------|
-| iOS | .strings, .stringsdict | en.lproj/Localizable.strings |
-| macOS | .strings, .stringsdict | en.lproj/Localizable.strings |
-| Windows | .resx | Resources.en.resx |
-| Linux | .po | en/LC_MESSAGES/messages.po |
+| Platform | Resource Types                                               | File Format            | Path Pattern                   |
+|----------|--------------------------------------------------------------|------------------------|--------------------------------|
+| iOS      | `strings`, `stringsdict`, `infoplist`, `main_target_strings` | .strings, .stringsdict | `en.lproj/Localizable.strings` |
+| macOS    | `strings`, `stringsdict`                                     | .strings, .stringsdict | `en.lproj/Localizable.strings` |
+| Windows  | `resx`                                                       | .resx                  | `Resources.en.resx`            |
 
-## Configuration Examples
+## Configuration examples
 
-### iOS/macOS
+### iOS
+
 ```yaml
 platform: ios
 localizable_path: /path/to/Resources
-main_target_localizable_path: /path/to/MainTarget  # iOS only
-languages: [en, fr, de, es]
-filters: [common]  # Optional Loco filters
+main_target_localizable_path: /path/to/MainTarget  # For InfoPlist.strings
+languages: [ en, fr, de, es, it ]
+filters: [ common ]  # Optional additional Loco tag filters
 ```
 
-### Windows
+### macOS
+
 ```yaml
-platform: windows
+platform: macos
 localizable_path: /path/to/Resources
-languages: [en, fr, de]
+languages: [ en, fr, de, es, it ]
 ```
 
-### Linux
-```yaml
-platform: linux
-localizable_path: /path/to/locale
-domain: myapp  # Optional, defaults to "messages"
-languages: [en, fr, de]
-```
+### All Configuration Options
 
-## API Key Priority
+| Option                         | Required | Description                                               |
+|--------------------------------|----------|-----------------------------------------------------------|
+| `platform`                     | No       | `ios` (default), `macos`, or `windows`                    |
+| `localizable_path`             | Yes      | Path to your localization files                           |
+| `main_target_localizable_path` | No       | iOS only: path for InfoPlist.strings                      |
+| `languages`                    | No       | List of language codes (defaults to `de, en, es, fr, it`) |
+| `filters`                      | No       | Additional Loco tag filters to include                    |
 
-1. Environment variable `LOCO_API_KEY`
-2. File `.import_loco_api` (in same directory as config)
-3. Config file field `loco_api_key`
+## Validation
 
-## Command-Line Options
-
-```
-python -m import_loco [OPTIONS]
-
-Options:
-  -r, --resource TYPE    Import specific resource type
-  -c, --check           Validate without importing
-  -v, --verbose         Enable debug logging
-  -h, --help           Show help
-```
-
-## Installation
+Run `-c` to check your translations without importing:
 
 ```bash
-git clone https://github.com/Infomaniak/importloco.git
-cd importloco
-pip install -e .
+import_loco -c
 ```
 
-### Requirements
-- Python 3.9+
-- requests>=2.32.5
-- pyyaml>=6.0.3
+The validator catches common localization issues:
+
+- **Global rules**: Straight apostrophes (`'` → `'`), wrong ellipsis (`...` → `…`), trailing spaces
+- **English**: No space before `:`, `?`, `!`
+- **French**: Space before `:`, `?`, `!` and proper email formatting
+- **German**: Currency symbols, specific terminology
+- **Italian/Spanish**: Terminology consistency, punctuation rules
+
+Validation errors show the language, string ID, and exactly what's wrong — so you can fix them before your users notice.
 
 ## Development
 
 ```bash
+# Install dev dependencies
+pdm install
+
 # Run tests
-python -m pytest tests/
+pdm run pytest
 
-# Run with coverage
-python -m pytest tests/ --cov=src/import_loco
-
-# Linting
-python -m ruff check src/import_loco/
+# Lint
+pdm run ruff check
 ```
 
-## Migration from Old Format
+### Requirements
 
-### Old (`.import_loco`)
-```ini
-[project]
-localizable_path = /path
-loco_key = xxx
-```
-
-### New (`.import_loco.yml`)
-```yaml
-platform: ios
-localizable_path: /path
-# Move API key to .import_loco_api file
-```
+- Python 3.9+
+- requests >= 2.32.5
+- pyyaml >= 6.0.3
 
 ## Troubleshooting
 
-**Configuration file not found**
-- Create `.import_loco.yml` in project root
+**"Configuration file not found"**
+→ Create `.import_loco.yml` in your project root
 
-**API key missing**
-- Set `LOCO_API_KEY` env var or create `.import_loco_api` file
+**"API key missing"**
+→ Set `LOCO_API_KEY` env var or create `.import_loco_api` file
 
-**Unsupported platform**
-- Use: `ios`, `macos`, `windows`, or `linux`
+**"Unsupported platform"**
+→ Use `ios`, `macos`, or `windows`
+
+**"Resource type not supported"**
+→ Check the platform table above for valid resource types
 
 ## Credits
 
-Designed by the iOS team at Infomaniak in Geneva, Switzerland.
+Crafted with care by the iOS team at [Infomaniak](https://www.infomaniak.com/) in Geneva, Switzerland.
 
 Inspired by [Ink](https://github.com/Infomaniak/ink_utils).
+
+Licensed under Apache 2.0.
 
 ---
 
