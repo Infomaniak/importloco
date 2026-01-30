@@ -122,10 +122,10 @@ class TestIOSPlatform:
         """Test configuration validation with missing required field."""
         platform = IOSPlatform({})
         config = {"localizable_path": "/path/to/localizable"}
-        
+
         with pytest.raises(LocoConfigError) as exc_info:
             platform.validate_configuration(config)
-        
+
         assert "loco_api_key" in str(exc_info.value)
 
     def test_validate_configuration_valid(self):
@@ -136,7 +136,7 @@ class TestIOSPlatform:
                 "loco_api_key": "test-key-123",
             }
             platform = IOSPlatform(config)
-            
+
             # Should not raise
             platform.validate_configuration(config)
 
@@ -184,7 +184,7 @@ class TestMacOSPlatform:
                 "loco_api_key": "test-key-456",
             }
             platform = MacOSPlatform(config)
-            
+
             # Should not raise
             platform.validate_configuration(config)
 
@@ -212,14 +212,14 @@ class TestPlatformRegistry:
         platform1 = get_platform("iOS", config)
         platform2 = get_platform("IOS", config)
         platform3 = get_platform("ios", config)
-        
+
         assert all(isinstance(p, IOSPlatform) for p in [platform1, platform2, platform3])
 
     def test_get_platform_unsupported(self):
         """Test that unsupported platform raises LocoConfigError."""
         with pytest.raises(LocoConfigError) as exc_info:
             get_platform("unsupported", {})
-        
+
         assert "Unsupported platform" in str(exc_info.value)
         assert "Available platforms" in str(exc_info.value)
 
