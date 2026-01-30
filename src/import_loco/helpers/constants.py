@@ -1,9 +1,3 @@
-"""Constants used throughout the import_loco application.
-
-This module defines all global constants including file paths, supported
-languages, and text formatting codes.
-"""
-
 import os
 
 # Temporary directory for extracting downloaded archives

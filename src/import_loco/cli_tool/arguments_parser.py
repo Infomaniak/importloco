@@ -1,19 +1,8 @@
-"""Command-line argument parsing for import_loco.
-
-This module handles parsing of command-line arguments and options for the
-import_loco CLI tool.
-"""
-
 import argparse
 from argparse import Namespace
 
 
 def _add_parser_arguments(parser: argparse.ArgumentParser) -> None:
-    """Add command-line arguments to the parser.
-
-    Args:
-        parser: ArgumentParser instance to add arguments to.
-    """
     parser.add_argument(
         "-r",
         "--resource",
@@ -36,11 +25,6 @@ def _add_parser_arguments(parser: argparse.ArgumentParser) -> None:
 
 
 def parse_arguments() -> Namespace:
-    """Parse command-line arguments.
-
-    Returns:
-        Namespace object containing parsed arguments.
-    """
     parser = argparse.ArgumentParser(
         prog="import_loco",
         description="Easily check and import the l8n strings from Loco into your projects.",
