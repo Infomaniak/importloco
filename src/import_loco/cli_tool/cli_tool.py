@@ -7,7 +7,7 @@ command-line argument processing.
 import logging
 import sys
 
-from import_loco.cli_tool.arguments_parser import parse_arguments
+from import_loco.cli_tool import arguments_parser
 from import_loco.core.config.config import get_project_config
 from import_loco.core.exceptions import LocoError
 from import_loco.core.platform_import import import_translations
@@ -18,54 +18,39 @@ logger = logging.getLogger(__name__)
 
 
 def run_tool() -> None:
-    """Run the import_loco CLI tool.
-
-    This is the main entry point that processes arguments, loads configuration,
-    and executes the import workflow.
-    """
-    # Configure logging
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     try:
-        arguments = parse_arguments()
+        arguments = arguments_parser.parse_arguments()
 
         if arguments.verbose:
             utils.is_verbose = True
             logging.getLogger().setLevel(logging.DEBUG)
             logger.debug("Verbose mode enabled")
 
-        # Load configuration
         config = get_project_config()
         logger.info("Configuration loaded successfully")
         logger.debug("Config: %s", config)
 
-        # Get platform from config
         platform_name = config.get("platform", "ios")
         logger.info("Using platform: %s", platform_name)
 
-        # Create platform instance
         platform = get_platform(platform_name, config)
 
-        # Validate configuration
         platform.validate_configuration(config)
 
-        # Determine which resources to import
         resources_to_import = []
         if arguments.check:
-            # Check mode - just validate existing files
             logger.info("Running in check-only mode")
         else:
-            # Import mode - determine resources based on arguments or import all
             if arguments.resource:
                 resources_to_import = arguments.resource
             else:
-                # Import all resource types for the platform
                 resources_to_import = platform.get_resource_types()
 
-        # Import each resource type
         all_success = True
         for resource_type in resources_to_import:
             logger.info("Importing resource type: %s", resource_type)
