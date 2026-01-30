@@ -1,5 +1,4 @@
-from import_loco.cli_tool.cli_tool import run_tool
-
+from import_loco.cli_tool import cli_tool
 
 if __name__ == "__main__":
-    run_tool()
+    cli_tool.run_tool()
