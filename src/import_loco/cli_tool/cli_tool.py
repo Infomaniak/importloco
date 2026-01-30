@@ -4,6 +4,7 @@ import sys
 from import_loco.cli_tool import arguments_parser
 from import_loco.core.config.config import get_project_config
 from import_loco.core.exceptions import LocoError
+from import_loco.core.loco.loco_validate import validate_strings
 from import_loco.core.loco.platform_import import import_translations
 from import_loco.core.platforms.platform_registry import get_platform
 
@@ -45,7 +46,9 @@ def run_tool() -> None:
                 continue
             import_translations(platform, resource_type)
 
-        # TODO: Check strings
+        files_are_valid = validate_strings(platform)
+        if arguments.check and not files_are_valid:
+            sys.exit(1)
 
     except LocoError as e:
         print(f"Error: {e}", file=sys.stderr)

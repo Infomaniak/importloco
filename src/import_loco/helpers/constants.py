@@ -18,3 +18,5 @@ SUPPORTED_LANGUAGES = ["de", "en", "es", "fr", "it"]
 # ANSI color codes for terminal output
 BOLD_TEXT = "\033[1m"
 END_TEXT = "\033[0m"
+RED_TEXT = "\033[91m"
+GREEN_TEXT = "\033[92m"
