@@ -21,9 +21,6 @@ API_KEY_ENV = "LOCO_API_KEY"
 # List of supported language codes
 SUPPORTED_LANGUAGES = ["de", "en", "es", "fr", "it"]
 
-# Loco filters to ignore during import
-FILTERS_TO_IGNORE = ["android"]
-
 # ANSI color codes for terminal output
 BOLD_TEXT = "\033[1m"
 RED_TEXT = "\033[91m"

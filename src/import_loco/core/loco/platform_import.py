@@ -1,9 +1,3 @@
-"""Platform-based import orchestration.
-
-This module provides the main import workflow using the Platform abstraction.
-It handles downloading, extracting, moving, and validating translation files.
-"""
-
 import logging
 import os
 import shutil
@@ -11,124 +5,64 @@ import zipfile
 
 from import_loco.core.exceptions import LocoParserError, LocoNetworkError
 from import_loco.core.loco.loco_network import fetch_archive, fetch_tags
-from import_loco.helpers.constants import FILTERS_TO_IGNORE, TMP_FOLDER
+from import_loco.helpers.constants import TMP_FOLDER
 from import_loco.helpers.utils import print_if_verbose
 from import_loco.platforms.base import Platform
 
 logger = logging.getLogger(__name__)
 
 
-def import_translations(platform: Platform, resource_type: str) -> bool:
-    """Import translations for a specific resource type.
-
-    Args:
-        platform: Platform instance with configuration.
-        resource_type: Type of resource to import (e.g., "strings", "stringsdict").
-
-    Returns:
-        True if import succeeded with no validation errors, False otherwise.
-
-    Raises:
-        LocoNetworkError: If download fails.
-        LocoParserError: If file parsing fails.
-    """
-    # Validate that resource type is supported
+def import_translations(platform: Platform, resource_type: str)
     if resource_type not in platform.get_resource_types():
         raise ValueError(f"Resource type '{resource_type}' not supported by {platform.name} platform")
 
     logger.info("Starting import for %s - %s", platform.name, resource_type)
 
-    # Step 1: Download archive
     archive_path = _download_archive(platform, resource_type)
-    print_if_verbose(f"(1/4) {resource_type} archive downloaded from Loco.")
+    print_if_verbose(f"(1/3) {resource_type} archive downloaded from Loco.")
 
-    # Step 2: Extract archive
     folder_with_strings = _extract_archive(archive_path)
-    print_if_verbose("(2/4) Archive extracted.")
+    print_if_verbose("(2/3) Archive extracted.")
 
-    # Step 3: Move files to destination
     _move_files_to_destination(platform, folder_with_strings, resource_type)
-    print_if_verbose("(3/4) Resources updated.")
-
-    # Step 4: Validate translations
-    error_count = _validate_translations(platform, resource_type)
-    _show_validation_result(error_count)
-    print_if_verbose("(4/4) Validation complete.\n")
-
-    return error_count == 0
+    print_if_verbose("(3/3) Resources updated.")
 
 
 def _download_archive(platform: Platform, resource_type: str) -> str:
-    """Download translation archive from Loco.
-
-    Args:
-        platform: Platform instance with configuration.
-        resource_type: Type of resource to download.
-
-    Returns:
-        Path to the downloaded archive file.
-
-    Raises:
-        LocoNetworkError: If download fails.
-    """
-    filters = _compute_filters(platform, resource_type)
-    endpoint = platform.get_archive_endpoint(resource_type)
     loco_api_key = platform.config.get("loco_api_key", "")
-
     if not loco_api_key:
         raise LocoNetworkError("Missing loco_api_key in configuration")
 
+    endpoint = platform.get_archive_endpoint(resource_type)
+    filters = _compute_filters(platform, resource_type)
     logger.info("Downloading archive with filters: %s", filters)
+
     archive_path = fetch_archive(endpoint, filters, loco_api_key)
 
     return archive_path
 
 
 def _compute_filters(platform: Platform, resource_type: str) -> str:
-    """Compute the final filter string for the API request.
-
-    This combines platform filters with project-specific filters and
-    excludes all tags not explicitly included.
-
-    Args:
-        platform: Platform instance with configuration.
-        resource_type: Type of resource.
-
-    Returns:
-        Comma-separated string of filters.
-
-    Raises:
-        LocoNetworkError: If fetching tags fails.
-    """
     platform_filters = platform.get_loco_filters(resource_type)
     project_filters = platform.config.get("filters", [])
 
-    # If no project-specific filters, just use platform filters
     if not project_filters:
         return ",".join(platform_filters)
 
-    # Fetch all available tags and exclude the ones not needed
     loco_api_key = platform.config.get("loco_api_key", "")
     all_loco_project_filters = fetch_tags(loco_api_key)
 
-    filters_to_exclude = [*platform_filters, *project_filters, *FILTERS_TO_IGNORE]
-    not_filters = [f"!{filter}" for filter in all_loco_project_filters if filter not in filters_to_exclude]
+    platform_filters_to_ignore = platform.get_loco_filters_to_ignore(resource_type)
+
+    filters_to_exclude = [*platform_filters, *platform_filters_to_ignore, *project_filters]
+    not_filters = [
+        f"!{current_filter}" for current_filter in all_loco_project_filters if current_filter not in filters_to_exclude
+    ]
 
     return ",".join([*platform_filters, *not_filters])
 
 
 def _extract_archive(archive_path: str) -> str:
-    """Extract a ZIP archive to the temporary folder.
-
-    Args:
-        archive_path: Path to the ZIP archive file.
-
-    Returns:
-        Name of the extracted directory inside TMP_FOLDER.
-
-    Raises:
-        LocoParserError: If extraction fails or directory structure is unexpected.
-    """
     if os.path.exists(TMP_FOLDER):
         shutil.rmtree(TMP_FOLDER)
     os.makedirs(TMP_FOLDER, exist_ok=True)
@@ -151,16 +85,6 @@ def _extract_archive(archive_path: str) -> str:
 
 
 def _move_files_to_destination(platform: Platform, folder: str, resource_type: str) -> None:
-    """Move extracted translation files to their final destinations.
-
-    Args:
-        platform: Platform instance with configuration.
-        folder: Name of the extracted directory inside TMP_FOLDER.
-        resource_type: Type of resource being imported.
-
-    Raises:
-        LocoParserError: If expected files are not found.
-    """
     base_path = platform.config.get("localizable_path", "")
     if not base_path:
         raise LocoParserError("Missing localizable_path in configuration")
@@ -192,15 +116,6 @@ def _move_files_to_destination(platform: Platform, folder: str, resource_type: s
 
 
 def _validate_translations(platform: Platform, resource_type: str) -> int:
-    """Validate translation files.
-
-    Args:
-        platform: Platform instance with configuration.
-        resource_type: Type of resource being validated.
-
-    Returns:
-        Number of validation errors found.
-    """
     try:
         import loco_validator.validator as loco_validator
     except ImportError:
