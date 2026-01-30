@@ -41,6 +41,9 @@ class IOSPlatform(Platform):
         else:
             raise ValueError(f"Unsupported resource type: {resource_type}")
 
+    def get_loco_filters_to_ignore(self, resource_type: str) -> List[str]:
+        return ["android"]
+
     def get_archive_endpoint(self, resource_type: str) -> str:
         if resource_type in ["strings", "infoplist"]:
             return "strings.zip"
@@ -67,3 +70,23 @@ class IOSPlatform(Platform):
                 logger.warning("Main target localizable path does not exist: %s", main_target_path)
 
         logger.info("iOS configuration validated successfully")
+
+    def get_source_file_path(self, language: str, resource_type: str) -> str:
+        language_folder = f"{language}.lproj"
+        if resource_type == "strings":
+            return f"{language_folder}/Localizable.strings"
+        elif resource_type == "stringsdict":
+            return f"{language_folder}/Localizable.stringsdict"
+        elif resource_type == "infoplist":
+            return f"{language_folder}/InfoPlist.strings"
+        else:
+            raise ValueError(f"Unsupported resource type for iOS: {resource_type}")
+
+    def get_destination_folder_path(self, language: str, resource_type: str) -> str:
+        language_folder = f"{language}.lproj"
+        if resource_type in ["strings", "stringsdict"]:
+            return f"{self.config.get('localizable_path', '')}/{language_folder}/"
+        elif resource_type == "infoplist":
+            return f"{self.config.get('main_target_localizable_path', '')}/{language_folder}"
+        else:
+            raise ValueError(f"Unsupported resource type for iOS: {resource_type}")

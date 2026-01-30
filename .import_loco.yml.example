@@ -4,9 +4,6 @@
 # Platform: ios, macos, windows, linux
 platform: ios
 
-# Loco API key - alternatively can be stored in .import_loco_api file
-loco_api_key: your-loco-api-key-here
-
 # Path to localizable files
 localizable_path: /path/to/your/project/Resources
 
@@ -20,9 +17,7 @@ languages:
   - de
   - es
   - it
-  - ja
 
 # Optional: Additional Loco filters to apply
 filters:
   - common
-  # Prefix with ! to exclude: !android

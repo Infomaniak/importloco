@@ -41,7 +41,7 @@ class Platform(ABC):
         pass
 
     @abstractmethod
-    def get_source_file_path(self, folder: str, language: str, resource_type: str) -> str:
+    def get_source_file_path(self, language: str, resource_type: str) -> str:
         pass
 
     @abstractmethod
