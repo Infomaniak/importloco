@@ -1,9 +1,3 @@
-"""Command-line interface for import_loco.
-
-This module provides the main entry point for the CLI tool and handles
-command-line argument processing.
-"""
-
 import logging
 import sys
 
@@ -47,6 +41,8 @@ def run_tool() -> None:
                 resources_to_import = platform.get_resource_types()
 
         for resource_type in resources_to_import:
+            if not platform.should_import_resource(resource_type):
+                continue
             import_translations(platform, resource_type)
 
         # TODO: Check strings
