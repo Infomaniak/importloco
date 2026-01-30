@@ -1,9 +1,3 @@
-"""Parsers for Apple platform translation files.
-
-This module provides parsers for .strings and .stringsdict files used by
-iOS and macOS applications.
-"""
-
 import logging
 import re
 from typing import Dict
@@ -17,24 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class StringsTranslationsParser(TranslationsParser):
-    """Parser for Apple .strings files.
-
-    .strings files contain key-value pairs in the format:
-        "key" = "value";
-    """
-
     def parse(self, filename: str) -> Dict[str, str]:
-        """Parse a .strings file and extract translations.
-
-        Args:
-            filename: Path to the .strings file.
-
-        Returns:
-            Dictionary mapping translation keys to their values.
-
-        Raises:
-            LocoParserError: If the file cannot be parsed.
-        """
         data = {}
         try:
             with open(filename, "r", encoding="utf-8") as strings_file:
@@ -58,25 +35,7 @@ class StringsTranslationsParser(TranslationsParser):
 
 
 class StringsDictTranslationsParser(TranslationsParser):
-    """Parser for Apple .stringsdict files.
-
-    .stringsdict files are XML plist files that contain pluralization rules
-    and formatted string variants.
-    """
-
     def parse(self, filename: str) -> Dict[str, str]:
-        """Parse a .stringsdict file and extract translations.
-
-        Args:
-            filename: Path to the .stringsdict file.
-
-        Returns:
-            Dictionary mapping translation keys (with plural form suffixes) to their values.
-            Keys are in the format "key-pluralForm" (e.g., "items-zero", "items-one").
-
-        Raises:
-            LocoParserError: If the file cannot be parsed.
-        """
         try:
             xml_tree = ElementTree.parse(filename)
             root_dict = xml_tree.find("dict")

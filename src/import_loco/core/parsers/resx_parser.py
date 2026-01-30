@@ -1,9 +1,3 @@
-"""Parser for Windows .resx (Resource) files.
-
-This module provides a parser for Windows .resx XML files used for
-localization in .NET applications.
-"""
-
 import logging
 from typing import Dict
 from xml.etree import ElementTree
@@ -16,32 +10,13 @@ logger = logging.getLogger(__name__)
 
 
 class ResxTranslationsParser(TranslationsParser):
-    """Parser for Windows .resx files.
-
-    .resx files are XML-based resource files used by .NET applications.
-    They contain key-value pairs in XML data elements.
-    """
-
     def parse(self, filename: str) -> Dict[str, str]:
-        """Parse a .resx file and extract translations.
-
-        Args:
-            filename: Path to the .resx file.
-
-        Returns:
-            Dictionary mapping translation keys to their values.
-
-        Raises:
-            LocoParserError: If the file cannot be parsed.
-        """
         try:
             tree = ElementTree.parse(filename)
             root = tree.getroot()
 
             data = {}
 
-            # .resx files have <data> elements with name attribute as key
-            # and <value> child element containing the translation
             for data_element in root.findall("data"):
                 name = data_element.get("name")
                 if name is None:
