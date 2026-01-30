@@ -12,7 +12,7 @@ from import_loco.platforms.base import Platform
 logger = logging.getLogger(__name__)
 
 
-def import_translations(platform: Platform, resource_type: str)
+def import_translations(platform: Platform, resource_type: str) -> None:
     if resource_type not in platform.get_resource_types():
         raise ValueError(f"Resource type '{resource_type}' not supported by {platform.name} platform")
 
@@ -85,78 +85,14 @@ def _extract_archive(archive_path: str) -> str:
 
 
 def _move_files_to_destination(platform: Platform, folder: str, resource_type: str) -> None:
-    base_path = platform.config.get("localizable_path", "")
-    if not base_path:
-        raise LocoParserError("Missing localizable_path in configuration")
-
     languages = platform.get_supported_languages()
 
     for language in languages:
-        language_folder = f"{language}.lproj"
+        source_file = platform.get_source_file_path(folder, language, resource_type)
+        destination_folder = platform.get_destination_folder_path(language, resource_type)
 
-        source_directory = f"{TMP_FOLDER}/{folder}/{language_folder}"
-        if not os.path.exists(source_directory):
-            logger.warning("Language directory not found: %s", source_directory)
-            continue
+        destination_dir = os.path.dirname(destination_folder)
+        os.makedirs(destination_dir, exist_ok=True)
 
-        source_files = os.listdir(source_directory)
-        if len(source_files) <= 0:
-            logger.error("No files found in %s", source_directory)
-            raise LocoParserError(f"Impossible to find the downloaded files in {source_directory}.")
-
-        source_file = f"{source_directory}/{source_files[0]}"
-        target_file = platform.get_translation_file_path(base_path, language, resource_type)
-
-        # Ensure target directory exists
-        target_dir = os.path.dirname(target_file)
-        os.makedirs(target_dir, exist_ok=True)
-
-        shutil.copy(source_file, target_file)
-        logger.info("Copied %s to %s", source_file, target_file)
-
-
-def _validate_translations(platform: Platform, resource_type: str) -> int:
-    try:
-        import loco_validator.validator as loco_validator
-    except ImportError:
-        logger.warning("loco_validator not available, skipping validation")
-        return 0
-
-    base_path = platform.config.get("localizable_path", "")
-    languages = platform.get_supported_languages()
-    parser = platform.get_parser_for_resource_type(resource_type)
-
-    error_count = 0
-    for language in languages:
-        localizable_path = platform.get_translation_file_path(base_path, language, resource_type)
-
-        if not os.path.exists(localizable_path):
-            logger.warning("Translation file not found: %s", localizable_path)
-            continue
-
-        try:
-            localizable_strings = parser.parse(localizable_path)
-        except Exception as e:
-            logger.error("Failed to parse %s: %s", localizable_path, e)
-            continue
-
-        for key, value in localizable_strings.items():
-            error_count += loco_validator.validate_string(language, key, value)
-
-    logger.info("Validation completed with %d errors", error_count)
-    return error_count
-
-
-def _show_validation_result(error_count: int) -> None:
-    """Display validation results to the user.
-
-    Args:
-        error_count: Number of validation errors found.
-    """
-    from import_loco.helpers.constants import GREEN_TEXT, RED_TEXT, BOLD_TEXT, END_TEXT
-
-    if error_count > 0:
-        plural = "s" if error_count > 1 else ""
-        print(f"\n{RED_TEXT}{BOLD_TEXT}{error_count} error{plural} found.{END_TEXT}")
-    else:
-        print(f"{GREEN_TEXT}{BOLD_TEXT}No error found.{END_TEXT}")
+        shutil.copy(source_file, destination_dir)
+        logger.info("Copied %s to %s", source_file, destination_dir)

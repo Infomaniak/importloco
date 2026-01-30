@@ -51,7 +51,11 @@ class Platform(ABC):
         pass
 
     @abstractmethod
-    def move_files_to_destination(self, source_folder: str, resource_type: str) -> None:
+    def get_source_file_path(self, folder: str, language: str, resource_type: str) -> str:
+        pass
+
+    @abstractmethod
+    def get_destination_folder_path(self, language: str, resource_type: str) -> str:
         pass
 
     @abstractmethod
