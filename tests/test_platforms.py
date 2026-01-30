@@ -1,6 +1,5 @@
 """Tests for platform implementations."""
 
-import os
 import tempfile
 
 import pytest
@@ -11,8 +10,8 @@ from import_loco.core.parsers.apple_translations_parser import (
     StringsDictTranslationsParser,
 )
 from import_loco.platforms import get_platform, list_available_platforms
-from import_loco.platforms.ios import IOSPlatform
-from import_loco.platforms.macos import MacOSPlatform
+from import_loco.core.platforms.ios import IOSPlatform
+from import_loco.core.platforms.macos import MacOSPlatform
 
 
 class TestIOSPlatform:

@@ -7,7 +7,7 @@ from import_loco.core.parsers.apple_translations_parser import (
     StringsTranslationsParser,
     StringsDictTranslationsParser,
 )
-from import_loco.platforms.base import Platform
+from import_loco.core.platforms.base import Platform
 
 logger = logging.getLogger(__name__)
 

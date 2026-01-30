@@ -6,7 +6,7 @@ import zipfile
 from import_loco.core.exceptions import LocoParserError, LocoNetworkError
 from import_loco.core.loco.loco_network import fetch_archive, fetch_tags
 from import_loco.helpers.constants import TMP_FOLDER
-from import_loco.platforms.base import Platform
+from import_loco.core.platforms.base import Platform
 
 logger = logging.getLogger(__name__)
 
