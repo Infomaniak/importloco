@@ -1,9 +1,3 @@
-"""Base class for platform-specific implementations.
-
-This module defines the abstract base class that all platform implementations
-must inherit from to provide platform-specific translation import functionality.
-"""
-
 from abc import ABC, abstractmethod
 from typing import Dict, List, Any
 
@@ -24,10 +18,6 @@ class Platform(ABC):
 
     @abstractmethod
     def get_default_languages(self) -> List[str]:
-        pass
-
-    @abstractmethod
-    def get_translation_file_path(self, base_path: str, language: str, resource_type: str) -> str:
         pass
 
     @abstractmethod
