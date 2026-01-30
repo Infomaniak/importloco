@@ -15,7 +15,7 @@ def import_translations(platform: Platform, resource_type: str) -> None:
     if resource_type not in platform.get_resource_types():
         raise ValueError(f"Resource type '{resource_type}' not supported by platform")
 
-    logger.debug("Starting import %s", resource_type)
+    print(f"Starting import {resource_type}")
 
     archive_path = _download_archive(platform, resource_type)
     print(f"(1/3) {resource_type} archive downloaded from Loco.")
