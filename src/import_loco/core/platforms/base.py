@@ -44,5 +44,9 @@ class Platform(ABC):
         pass
 
     @abstractmethod
+    def should_import_resource(self, resource_type: str) -> str:
+        pass
+
+    @abstractmethod
     def validate_configuration(self, config: Dict[str, Any]) -> None:
         pass

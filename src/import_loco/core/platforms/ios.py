@@ -86,3 +86,11 @@ class IOSPlatform(Platform):
             return f"{self.config.get('main_target_localizable_path', '')}/{language_folder}"
         else:
             raise ValueError(f"Unsupported resource type for iOS: {resource_type}")
+
+    def should_import_resource(self, resource_type: str) -> str:
+        if resource_type in ["strings", "stringsdict"]:
+            return self.config.get("localizable_path", "") != ""
+        elif resource_type == "infoplist":
+            return self.config.get("main_target_localizable_path", "") != ""
+        else:
+            raise ValueError(f"Unsupported resource type: {resource_type}")
