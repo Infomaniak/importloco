@@ -34,7 +34,6 @@ def _load_api_key(api_key_file: str) -> str:
             logger.info("Using API key from %s", api_key_file)
             return api_key
         else:
-            logger.error("Failed to load API key from %s", api_key_file)
             raise LocoConfigError(f"Error while reading API key file {api_key_file}")
 
 
@@ -46,14 +45,11 @@ def _read_config(config_file: str) -> Dict[str, Any]:
             config = yaml.safe_load(f)
         return config
     except yaml.YAMLError as e:
-        logger.error("Failed to parse configuration file: %s", e)
         raise LocoConfigError(f"Invalid YAML in configuration file: {e}")
     except Exception as e:
-        logger.error("Failed to read configuration file: %s", e)
         raise LocoConfigError(f"Failed to read configuration file: {e}")
 
 
 def _ensure_file_exist(file: str) -> None:
     if not os.path.isfile(file):
-        logger.error("File not found: %s", file)
         raise LocoConfigError(f"File is missing. Please create a configuration file at {file}.")

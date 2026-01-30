@@ -6,7 +6,6 @@ import zipfile
 from import_loco.core.exceptions import LocoParserError, LocoNetworkError
 from import_loco.core.loco.loco_network import fetch_archive, fetch_tags
 from import_loco.helpers.constants import TMP_FOLDER
-from import_loco.helpers.utils import print_if_verbose
 from import_loco.platforms.base import Platform
 
 logger = logging.getLogger(__name__)
@@ -19,13 +18,13 @@ def import_translations(platform: Platform, resource_type: str) -> None:
     logger.info("Starting import for %s - %s", platform.name, resource_type)
 
     archive_path = _download_archive(platform, resource_type)
-    print_if_verbose(f"(1/3) {resource_type} archive downloaded from Loco.")
+    logger.info(f"(1/3) {resource_type} archive downloaded from Loco.")
 
     folder_with_strings = _extract_archive(archive_path)
-    print_if_verbose("(2/3) Archive extracted.")
+    logger.info("(2/3) Archive extracted.")
 
     _move_files_to_destination(platform, folder_with_strings, resource_type)
-    print_if_verbose("(3/3) Resources updated.")
+    logger.info("(3/3) Resources updated.")
 
 
 def _download_archive(platform: Platform, resource_type: str) -> str:
