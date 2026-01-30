@@ -35,15 +35,12 @@ class ResxTranslationsParser(TranslationsParser):
                     # Empty value is valid, store as empty string
                     data[name] = ""
 
-            logger.info("Successfully parsed %d translations from %s", len(data), filename)
+            logger.debug("Successfully parsed %d translations from %s", len(data), filename)
             return data
 
         except FileNotFoundError:
-            logger.error("Resx file not found: %s", filename)
             raise LocoParserError(f"Resx file not found: {filename}")
         except ParseError as e:
-            logger.error("Failed to parse XML in %s: %s", filename, e)
             raise LocoParserError(f"Invalid XML in resx file {filename}: {e}")
         except Exception as e:
-            logger.error("Failed to parse resx file %s: %s", filename, e)
             raise LocoParserError(f"Failed to parse resx file {filename}: {e}")

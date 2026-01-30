@@ -16,14 +16,14 @@ def get_project_config(config_file: str = CONFIG_FILE_PATH, api_key_file: str = 
     api_key = _load_api_key(api_key_file)
     config["loco_api_key"] = api_key
 
-    logger.info("Configuration loaded successfully")
+    logger.debug("Configuration loaded successfully")
     return config
 
 
 def _load_api_key(api_key_file: str) -> str:
     env_api_key = os.environ.get(API_KEY_ENV)
     if env_api_key:
-        logger.info("Using API key from %s environment variable", API_KEY_ENV)
+        logger.debug("Using API key from %s environment variable", API_KEY_ENV)
         return env_api_key
 
     _ensure_file_exist(api_key_file)
@@ -31,7 +31,7 @@ def _load_api_key(api_key_file: str) -> str:
     with open(api_key_file, "r", encoding="utf-8") as f:
         api_key = f.read().strip()
         if api_key:
-            logger.info("Using API key from %s", api_key_file)
+            logger.debug("Using API key from %s", api_key_file)
             return api_key
         else:
             raise LocoConfigError(f"Error while reading API key file {api_key_file}")

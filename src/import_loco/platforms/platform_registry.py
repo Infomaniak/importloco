@@ -21,9 +21,8 @@ def get_platform(platform_name: str, config: Dict[str, Any]) -> Platform:
 
     if platform_name not in _PLATFORM_REGISTRY:
         available_platforms = ", ".join(_PLATFORM_REGISTRY.keys())
-        logger.error("Unsupported platform: %s", platform_name)
         raise LocoConfigError(f"Unsupported platform: {platform_name}. Available platforms: {available_platforms}")
 
     platform_class = _PLATFORM_REGISTRY[platform_name]
-    logger.info("Creating platform instance: %s", platform_name)
+    logger.debug("Creating platform instance: %s", platform_name)
     return platform_class(config)

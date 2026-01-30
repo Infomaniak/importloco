@@ -15,16 +15,16 @@ def import_translations(platform: Platform, resource_type: str) -> None:
     if resource_type not in platform.get_resource_types():
         raise ValueError(f"Resource type '{resource_type}' not supported by {platform.name} platform")
 
-    logger.info("Starting import for %s - %s", platform.name, resource_type)
+    logger.debug("Starting import for %s - %s", platform.name, resource_type)
 
     archive_path = _download_archive(platform, resource_type)
-    logger.info(f"(1/3) {resource_type} archive downloaded from Loco.")
+    print(f"(1/3) {resource_type} archive downloaded from Loco.")
 
     folder_with_strings = _extract_archive(archive_path)
-    logger.info("(2/3) Archive extracted.")
+    print("(2/3) Archive extracted.")
 
     _move_files_to_destination(platform, folder_with_strings, resource_type)
-    logger.info("(3/3) Resources updated.")
+    print("(3/3) Resources updated.")
 
 
 def _download_archive(platform: Platform, resource_type: str) -> str:
@@ -34,7 +34,7 @@ def _download_archive(platform: Platform, resource_type: str) -> str:
 
     endpoint = platform.get_archive_endpoint(resource_type)
     filters = _compute_filters(platform, resource_type)
-    logger.info("Downloading archive with filters: %s", filters)
+    logger.debug("Downloading archive with filters: %s", filters)
 
     archive_path = fetch_archive(endpoint, filters, loco_api_key)
 
@@ -70,17 +70,15 @@ def _extract_archive(archive_path: str) -> str:
         with zipfile.ZipFile(archive_path, "r") as zip_ref:
             zip_ref.extractall(TMP_FOLDER)
     except zipfile.BadZipFile as e:
-        logger.error("Failed to extract archive: %s", e)
         raise LocoParserError(f"Invalid ZIP archive: {e}")
 
     files = os.listdir(TMP_FOLDER)
     directories = [file for file in files if os.path.isdir(f"{TMP_FOLDER}/{file}")]
     if len(directories) <= 0:
-        logger.error("Extracted archive is empty or has unexpected structure")
         raise LocoParserError("Impossible to find extracted archive. Archive may be empty or malformed.")
 
     folder_path = f"{TMP_FOLDER}/{directories[0]}"
-    logger.info("Successfully extracted archive to %s", folder_path)
+    logger.debug("Successfully extracted archive to %s", folder_path)
     return folder_path
 
 
@@ -96,4 +94,4 @@ def _move_files_to_destination(platform: Platform, folder: str, resource_type: s
 
         source_path = os.path.join(folder, source_file)
         shutil.copy(source_path, destination_dir)
-        logger.info("Copied %s to %s", source_path, destination_dir)
+        logger.debug("Copied %s to %s", source_path, destination_dir)

@@ -59,4 +59,4 @@ class MacOSPlatform(Platform):
         if not os.path.exists(localizable_path):
             logger.warning("Localizable path does not exist: %s", localizable_path)
 
-        logger.info("macOS configuration validated successfully")
+        logger.debug("macOS configuration validated successfully")

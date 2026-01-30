@@ -50,4 +50,4 @@ class WindowsPlatform(Platform):
         if not os.path.exists(localizable_path):
             logger.warning("Localizable path does not exist: %s", localizable_path)
 
-        logger.info("Windows configuration validated successfully")
+        logger.debug("Windows configuration validated successfully")
