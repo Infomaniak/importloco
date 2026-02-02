@@ -1,4 +1,5 @@
 import logging
+import os
 
 import loco_validator.validator as loco_validator
 
@@ -23,6 +24,10 @@ def compute_error_count(platform: Platform) -> int:
 
         for language in platform.get_supported_languages():
             destination_path = platform.get_destination_file_path(language, resource_type)
+
+            if not os.path.exists(destination_path):
+                print(f"Skipping missing destination file: {destination_path}")
+                continue
 
             try:
                 parsed_strings = parser.parse(destination_path)
