@@ -32,19 +32,14 @@ def run_tool() -> None:
         platform = get_platform(platform_name, config)
         platform.validate_configuration(config)
 
-        resources_to_import = []
         if arguments.check:
             print("Running in check-only mode")
         else:
-            if arguments.resource:
-                resources_to_import = arguments.resource
-            else:
-                resources_to_import = platform.get_resource_types()
-
-        for resource_type in resources_to_import:
-            if not platform.should_import_resource(resource_type):
-                continue
-            import_translations(platform, resource_type)
+            resources_to_import = arguments.resource if arguments.resource else platform.get_resource_types()
+            for resource_type in resources_to_import:
+                if not platform.should_import_resource(resource_type):
+                    continue
+                import_translations(platform, resource_type)
 
         files_are_valid = validate_strings(platform)
         if arguments.check and not files_are_valid:

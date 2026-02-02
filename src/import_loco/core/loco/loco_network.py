@@ -32,13 +32,9 @@ def fetch_tags(loco_key: str) -> Optional[List[str]]:
         response = requests.get(endpoint, headers=headers, timeout=30)
         response.raise_for_status()
 
-        if response.status_code == 200:
-            tags = response.json()
-            logger.debug("Successfully fetched %d tags", len(tags))
-            return tags
-        else:
-            logger.warning("Unexpected status code %d when fetching tags", response.status_code)
-            return None
+        tags = response.json()
+        logger.debug("Successfully fetched %d tags", len(tags))
+        return tags
     except requests.RequestException as e:
         raise LocoNetworkError(f"Failed to fetch tags from Loco API: {e}")
 

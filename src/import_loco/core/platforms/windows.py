@@ -23,7 +23,7 @@ class WindowsPlatform(Platform):
     def _format_source_path(self, language: str, filename: str) -> str:
         source_path = filename.format(language=language)
         if language == "en":
-            source_path = str.replace(source_path, f"{language}.", "")
+            source_path = source_path.replace(f"{language}.", "")
 
         return f"App_LocalResources/{source_path}"
 

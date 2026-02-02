@@ -43,6 +43,8 @@ def _read_config(config_file: str) -> Dict[str, Any]:
     try:
         with open(config_file, "r", encoding="utf-8") as f:
             config = yaml.safe_load(f)
+        if not isinstance(config, dict):
+            raise LocoConfigError("Configuration file must contain a YAML dictionary")
         return config
     except yaml.YAMLError as e:
         raise LocoConfigError(f"Invalid YAML in configuration file: {e}")

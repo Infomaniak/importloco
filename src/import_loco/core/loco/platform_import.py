@@ -95,5 +95,11 @@ def _move_files_to_destination(platform: Platform, folder: str, resource_type: s
         logger.debug("Moving %s to %s", source_file, destination_path)
 
         source_path = os.path.join(folder, source_file)
-        shutil.copy2(source_path, destination_path)
-        logger.debug("Copied %s to %s", source_path, destination_path)
+        try:
+            shutil.copy2(source_path, destination_path)
+            logger.debug("Copied %s to %s", source_path, destination_path)
+        except FileNotFoundError as exc:
+            raise LocoParserError(
+                f"Missing source translation file for language '{language}' at '{source_path}'. "
+                "The archive may be missing this language file."
+            ) from exc

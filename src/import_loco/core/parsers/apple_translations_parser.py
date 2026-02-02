@@ -46,6 +46,11 @@ class StringsDictTranslationsParser(TranslationsParser):
             key_index = 0
             while key_index + 1 < len(root_dict):
                 key = root_dict[key_index].text
+                if key is None:
+                    logger.warning("Skipping entry with missing key at index %d in %s", key_index, filename)
+                    key_index += 2
+                    continue
+
                 dict_items = root_dict[key_index + 1]
 
                 strings_dict = dict_items.find("dict")
