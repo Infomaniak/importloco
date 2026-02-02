@@ -6,7 +6,7 @@ from import_loco.core.parsers.apple_translations_parser import (
     StringsDictTranslationsParser,
     StringsTranslationsParser,
 )
-from import_loco.core.platforms.apple import ApplePlatform
+from import_loco.core.platforms.apple.apple_platform import ApplePlatform
 from import_loco.core.platforms.resource_type_config import ResourceTypeConfig
 
 logger = logging.getLogger(__name__)

@@ -2,9 +2,9 @@ import logging
 from typing import Any, Dict, Type
 
 from import_loco.core.exceptions import LocoConfigError
-from import_loco.core.platforms.base import Platform
-from import_loco.core.platforms.ios import IOSPlatform
-from import_loco.core.platforms.macos import MacOSPlatform
+from import_loco.core.platforms.platform import Platform
+from import_loco.core.platforms.apple.ios_platform import IOSPlatform
+from import_loco.core.platforms.apple.macos_platform import MacOSPlatform
 from import_loco.core.platforms.windows import WindowsPlatform
 
 logger = logging.getLogger(__name__)

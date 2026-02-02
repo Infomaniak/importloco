@@ -1,7 +1,7 @@
 import logging
 
 from import_loco.core.parsers.resx_parser import ResxTranslationsParser
-from import_loco.core.platforms.base import Platform
+from import_loco.core.platforms.platform import Platform
 from import_loco.core.platforms.resource_type_config import ResourceTypeConfig
 
 logger = logging.getLogger(__name__)

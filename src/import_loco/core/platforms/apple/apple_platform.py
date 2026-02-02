@@ -1,4 +1,4 @@
-from import_loco.core.platforms.base import Platform
+from import_loco.core.platforms.platform import Platform
 
 
 class ApplePlatform(Platform):

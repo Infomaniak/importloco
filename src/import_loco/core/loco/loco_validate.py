@@ -4,7 +4,7 @@ import os
 import loco_validator.validator as loco_validator
 
 from import_loco.core.exceptions import LocoValidationError
-from import_loco.core.platforms.base import Platform
+from import_loco.core.platforms.platform import Platform
 from import_loco.helpers.constants import GREEN_TEXT, RED_TEXT, BOLD_TEXT, END_TEXT
 
 logger = logging.getLogger(__name__)
