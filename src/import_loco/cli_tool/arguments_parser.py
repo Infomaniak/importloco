@@ -11,7 +11,6 @@ def _add_parser_arguments(parser: argparse.ArgumentParser) -> None:
         help="Specify the kind of resources to import",
     )
     parser.add_argument(
-        "-c",
         "--check",
         action="store_true",
         help="Run a complete check over the project's strings",

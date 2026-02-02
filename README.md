@@ -50,7 +50,7 @@ echo "your-api-key" > .import_loco_api
 import_loco                            # Import everything
 import_loco -r strings                 # Just .strings files
 import_loco -r strings -r stringsdict  # .strings and .stringsdict files
-import_loco -c                         # Validate only (no import)
+import_loco --check                    # Validate only (no import)
 import_loco -v                         # Verbose mode for the curious
 ```
 
@@ -62,31 +62,23 @@ import_loco -v                         # Verbose mode for the curious
 | macOS    | `strings`, `stringsdict`                                     | .strings, .stringsdict | `en.lproj/Localizable.strings` |
 | Windows  | `resx`                                                       | .resx                  | `Resources.en.resx`            |
 
-## Configuration examples
-
-### iOS
+## Configuration example
 
 ```yaml
 platform: ios
+
 localizable_path: /path/to/Resources
 main_target_localizable_path: /path/to/MainTarget  # For InfoPlist.strings
-languages: [ en, fr, de, es, it ]
-filters: [ common ]  # Optional additional Loco tag filters
-```
 
-### macOS
-
-```yaml
-platform: macos
-localizable_path: /path/to/Resources
-languages: [ en, fr, de, es, it ]
+languages: [ en, fr, de, es, it ] # Optional, defaults to de, en, es, fr, it
+filters: [ common ]  # Optional for additional Loco tag filters
 ```
 
 ### All Configuration Options
 
 | Option                         | Required | Description                                               |
 |--------------------------------|----------|-----------------------------------------------------------|
-| `platform`                     | No       | `ios` (default), `macos`, or `windows`                    |
+| `platform`                     | Yes      | `ios`, `macos`, or `windows`                              |
 | `localizable_path`             | Yes      | Path to your localization files                           |
 | `main_target_localizable_path` | No       | iOS only: path for InfoPlist.strings                      |
 | `languages`                    | No       | List of language codes (defaults to `de, en, es, fr, it`) |
@@ -94,10 +86,10 @@ languages: [ en, fr, de, es, it ]
 
 ## Validation
 
-Run `-c` to check your translations without importing:
+Run `--check` to check your translations without importing:
 
 ```bash
-import_loco -c
+import_loco --check
 ```
 
 The validator catches common localization issues:

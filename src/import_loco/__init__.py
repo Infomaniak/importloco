@@ -1,5 +1,4 @@
-from import_loco.cli_tool import cli_tool
+def cli():
+    from import_loco.cli_tool import cli_tool
 
-
-def main():
     cli_tool.run_tool()
