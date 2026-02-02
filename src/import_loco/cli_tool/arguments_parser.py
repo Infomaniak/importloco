@@ -1,5 +1,4 @@
 import argparse
-from argparse import Namespace
 
 
 def _add_parser_arguments(parser: argparse.ArgumentParser) -> None:
@@ -23,7 +22,7 @@ def _add_parser_arguments(parser: argparse.ArgumentParser) -> None:
     )
 
 
-def parse_arguments() -> Namespace:
+def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="import_loco",
         description="Easily check and import the l8n strings from Loco into your projects.",

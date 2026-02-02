@@ -15,7 +15,7 @@ from [Loco](https://localise.biz/) and drops them right into your iOS, macOS, or
 
 ### 1. Install
 
-## With mise
+#### With mise
 
 ```bash
 mise install pipx@latest
@@ -118,7 +118,7 @@ pdm run ruff check
 ### Requirements
 
 - Python 3.9+
-- requests >= 2.32.5
+- requests == 2.28.2
 - pyyaml >= 6.0.3
 
 ## Troubleshooting
