@@ -1,56 +1,147 @@
 # Import Loco
 
-Import strings like a noob.
+Your friendly neighborhood localization importer! A modern Python CLI tool that fetches your localized strings
+from [Loco](https://localise.biz/) and drops them right into your iOS, macOS, or Windows project. No fuss, no muss.
 
-Designed by ~~Apple~~ iOS team in ~~California~~ Geneva. Inspired by [Ink](https://github.com/Infomaniak/ink_utils).
+## What's in the Box?
 
-## Install the script
+- **Multi-Platform Love**: iOS, macOS, and Windows are all invited to the party
+- **All the Formats**: `.strings`, `.stringsdict`, and `.resx` — we speak your language(s)
+- **Validation Superpowers**: Catches typos, wrong punctuation, and those sneaky straight apostrophes before they reach production
+- **YAML Config**: Because life's too short for INI files
+- **Secure by Default**: API keys stay safe in env vars or separate files
 
-### Python dependencies
+## Quick Start
 
-Import Loco requires one dependency.
+### 1. Install
+
+#### With mise
+
 ```bash
-$ pip3 install requests==2.28.2
+mise install pipx@latest
+pipx install pipx:infomaniak/importloco
 ```
 
-### Configuration file
+### 2. Configure
 
-Import Loco needs a configuration file to set up your projects.
-You need to create a file in your home directory with the name `.import_loco`.
+Create `.import_loco.yml` in your project root:
+
+```yaml
+platform: ios
+localizable_path: /path/to/your/Resources
+languages: [ en, fr, de, es, it ]
+```
+
+### 3. Set Your API Key
+
+Pick your favorite method:
+
 ```bash
-$ touch ~/.import_loco
-```
-For each project, add these lines with the values corresponding to your setup:
-```
-[project_name]
-localizable_path = /Users/.../project/.../Localizable
-main_target_localizable_path = /Users/.../project/.../Localizable
-loco_key = xxx
-filters = !common
+# Environment variable (great for CI/CD)
+export LOCO_API_KEY="your-api-key"
+
+# Or a dedicated file (nice for local dev)
+echo "your-api-key" > .import_loco_api
 ```
 
-- `project_localizable`: Absolute path to the project's localizable files.
-- `main_target_localizable_path` *(Optional)*: Absolute path to the localizable files of the main target of the app. Required to import InfoPlist files.
-- `loco_key`: Loco API key.
-- `filters` *(Optional)*: Additional filters for the project.
+### 4. Import!
 
-## Execute the script
-
-To run the script, simply execute the following line in a terminal.
-The project name corresponds to the one you added in the `.import_loco` file.
 ```bash
-$ python3 path_to_script/importLoco/main.py {project_name}
+import_loco                         # Import everything
+import_loco -r strings              # Just .strings files
+import_loco -r strings stringsdict  # .strings and .stringsdict files
+import_loco --check                 # Validate only (no import)
+import_loco -v                      # Verbose mode for the curious
 ```
 
-You can create an alias in your `.bashrc` to make life easier.
-```bash
-alias import_loco="python3 path_to_script/importLoco/main.py"
+## Platform Support
+
+| Platform | Resource Types                                               | File Format            | Path Pattern                   |
+|----------|--------------------------------------------------------------|------------------------|--------------------------------|
+| iOS      | `strings`, `stringsdict`, `infoplist`, `main_target_strings` | .strings, .stringsdict | `en.lproj/Localizable.strings` |
+| macOS    | `strings`, `stringsdict`                                     | .strings, .stringsdict | `en.lproj/Localizable.strings` |
+| Windows  | `resx`                                                       | .resx                  | `Resources.en.resx`            |
+
+## Configuration example
+
+```yaml
+platform: ios
+
+localizable_path: /path/to/Resources
+main_target_localizable_path: /path/to/MainTarget  # For InfoPlist.strings
+
+languages: [ en, fr, de, es, it ] # Optional, defaults to de, en, es, fr, it
+filters: [ common ]  # Optional for additional Loco tag filters
 ```
 
-Then you can call the script as follows:
+### All Configuration Options
+
+| Option                         | Required | Description                                               |
+|--------------------------------|----------|-----------------------------------------------------------|
+| `platform`                     | Yes      | `ios`, `macos`, or `windows`                              |
+| `localizable_path`             | Yes      | Path to your localization files                           |
+| `main_target_localizable_path` | No       | iOS only: path for InfoPlist.strings                      |
+| `languages`                    | No       | List of language codes (defaults to `de, en, es, fr, it`) |
+| `filters`                      | No       | Additional Loco tag filters to include                    |
+
+## Validation
+
+Run `--check` to check your translations without importing:
+
 ```bash
-import_loco {project_name}
+import_loco --check
 ```
+
+The validator catches common localization issues:
+
+- **Global rules**: Straight apostrophes (`'` → `'`), wrong ellipsis (`...` → `…`), trailing spaces
+- **English**: No space before `:`, `?`, `!`
+- **French**: Space before `:`, `?`, `!` and proper email formatting
+- **German**: Currency symbols, specific terminology
+- **Italian/Spanish**: Terminology consistency, punctuation rules
+
+Validation errors show the language, string ID, and exactly what's wrong — so you can fix them before your users notice.
+
+## Development
+
+```bash
+# Install dev dependencies
+pdm install
+
+# Run tests
+pdm run pytest
+
+# Lint
+pdm run ruff check
+```
+
+### Requirements
+
+- Python 3.9+
+- requests == 2.28.2
+- pyyaml >= 6.0.3
+
+## Troubleshooting
+
+**"Configuration file not found"**
+→ Create `.import_loco.yml` in your project root
+
+**"API key missing"**
+→ Set `LOCO_API_KEY` env var or create `.import_loco_api` file
+
+**"Unsupported platform"**
+→ Use `ios`, `macos`, or `windows`
+
+**"Resource type not supported"**
+→ Check the platform table above for valid resource types
+
+## Credits
+
+Crafted with care by the iOS team at [Infomaniak](https://www.infomaniak.com/) in Geneva, Switzerland.
+
+Inspired by [Ink](https://github.com/Infomaniak/ink_utils).
+
+Licensed under Apache 2.0.
 
 ---
 

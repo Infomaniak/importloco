@@ -2,13 +2,16 @@
 name = "import_loco"
 description = "Easily check and import the l8n strings from Loco into your projects"
 authors = [
-    {name = "Valentin Perignon", email = "valentin.perignon@infomaniak.com"},
+    { name = "Valentin Perignon", email = "valentin.perignon@infomaniak.com" },
 ]
-dependencies = ["requests==2.28.2"]
 requires-python = ">=3.9"
 readme = "README.md"
-license = {text = "Apache License 2.0"}
+license = { text = "Apache License 2.0" }
 dynamic = ["version"]
+dependencies = ["requests==2.28.2", "pyyaml>=6.0.3"]
+
+[project.scripts]
+import_loco = "import_loco:cli"
 
 [build-system]
 requires = ["pdm-backend"]

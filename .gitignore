@@ -6,3 +6,9 @@ dist/
 import_loco.spec
 .DS_Store
 .pdm-python
+*.pyc
+.coverage
+.pytest_cache
+htmlcov/
+.import_loco_api
+.import_loco.yml
