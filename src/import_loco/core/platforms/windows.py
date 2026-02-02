@@ -15,7 +15,7 @@ class WindowsPlatform(Platform):
             loco_filters=["windows"],
             archive_endpoint="resx.zip",
             source_filename="Default.aspx.{language}.resx",
-            destination_filename="Resources.{language}.resx",
+            destination_filename="{language}-{country}/Resources.resw",
             config_key="localizable_path",
         ),
     }
@@ -28,4 +28,11 @@ class WindowsPlatform(Platform):
         return f"App_LocalResources/{source_path}"
 
     def _format_destination_path(self, language: str, filename: str) -> str:
-        return filename.format(language=language)
+        countries = {
+            "en": "US",
+            "fr": "FR",
+            "it": "IT",
+            "es": "ES",
+            "de": "DE",
+        }
+        return filename.format(language=language, country=countries[language])
