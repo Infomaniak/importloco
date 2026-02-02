@@ -51,11 +51,11 @@ class Platform(ABC):
 
     @abstractmethod
     def _format_source_path(self, language: str, filename: str) -> str:
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def _format_destination_path(self, language: str, filename: str) -> str:
-        pass
+        raise NotImplementedError
 
     def get_source_file_path(self, language: str, resource_type: str) -> str:
         config = self._get_resource_config(resource_type)
@@ -92,4 +92,4 @@ class Platform(ABC):
                     logger.warning("Path does not exist: %s", path)
 
     def _validate_platform_specific(self, config: Dict[str, Any]) -> None:
-        pass
+        raise NotImplementedError
