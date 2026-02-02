@@ -74,7 +74,6 @@ class Platform(ABC):
     def validate_configuration(self, config: Dict[str, Any]) -> None:
         self._validate_required_fields(config)
         self._validate_paths(config)
-        self._validate_platform_specific(config)
         logger.debug("%s configuration validated successfully", self.__class__.__name__)
 
     def _validate_required_fields(self, config: Dict[str, Any]) -> None:
@@ -90,6 +89,3 @@ class Platform(ABC):
                 path = config[config_key]
                 if path and not os.path.exists(path):
                     logger.warning("Path does not exist: %s", path)
-
-    def _validate_platform_specific(self, config: Dict[str, Any]) -> None:
-        raise NotImplementedError

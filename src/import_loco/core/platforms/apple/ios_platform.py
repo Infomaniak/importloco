@@ -56,7 +56,8 @@ class IOSPlatform(ApplePlatform):
         ),
     }
 
-    def _validate_platform_specific(self, config: Dict[str, Any]) -> None:
+    def validate_configuration(self, config: Dict[str, Any]) -> None:
+        super().validate_configuration(config)
         if "main_target_localizable_path" in config:
             main_target_path = config["main_target_localizable_path"]
             if main_target_path and not os.path.exists(main_target_path):
