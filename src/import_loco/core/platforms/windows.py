@@ -14,14 +14,18 @@ class WindowsPlatform(Platform):
             parser_class=ResxTranslationsParser,
             loco_filters=["windows"],
             archive_endpoint="resx.zip",
-            source_filename="Resources.{language}.resx",
+            source_filename="Default.aspx.{language}.resx",
             destination_filename="Resources.{language}.resx",
             config_key="localizable_path",
         ),
     }
 
     def _format_source_path(self, language: str, filename: str) -> str:
-        return filename.format(language=language)
+        source_path = filename.format(language=language)
+        if language == "en":
+            source_path = str.replace(source_path, f"{language}.", "")
+
+        return f"App_LocalResources/{source_path}"
 
     def _format_destination_path(self, language: str, filename: str) -> str:
         return filename.format(language=language)
