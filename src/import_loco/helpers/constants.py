@@ -1,5 +1,3 @@
-import os
-
 # Temporary directory for extracting downloaded archives
 TMP_FOLDER = "/tmp/import_loco"
 
