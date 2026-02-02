@@ -35,7 +35,7 @@ def run_tool() -> None:
         if arguments.check:
             print("Running in check-only mode")
         else:
-            resources_to_import = arguments.resource if arguments.resource else platform.get_resource_types()
+            resources_to_import = arguments.resources if arguments.resources else platform.get_resource_types()
             for resource_type in resources_to_import:
                 if not platform.should_import_resource(resource_type):
                     continue

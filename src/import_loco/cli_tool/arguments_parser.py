@@ -4,9 +4,8 @@ import argparse
 def _add_parser_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "-r",
-        "--resource",
-        action="append",
-        default=[],
+        "--resources",
+        nargs="+",
         help="Specify the kind of resources to import",
     )
     parser.add_argument(

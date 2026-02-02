@@ -47,11 +47,11 @@ echo "your-api-key" > .import_loco_api
 ### 4. Import!
 
 ```bash
-import_loco                            # Import everything
-import_loco -r strings                 # Just .strings files
-import_loco -r strings -r stringsdict  # .strings and .stringsdict files
-import_loco --check                    # Validate only (no import)
-import_loco -v                         # Verbose mode for the curious
+import_loco                         # Import everything
+import_loco -r strings              # Just .strings files
+import_loco -r strings stringsdict  # .strings and .stringsdict files
+import_loco --check                 # Validate only (no import)
+import_loco -v                      # Verbose mode for the curious
 ```
 
 ## Platform Support
