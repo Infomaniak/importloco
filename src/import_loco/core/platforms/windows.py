@@ -34,5 +34,13 @@ class WindowsPlatform(Platform):
             "it": "IT",
             "es": "ES",
             "de": "DE",
+            "da": "DK",
+            "nl": "NL",
+            "fi": "FI",
+            "el": "GR",
+            "nb": "NO",
+            "pl": "PL",
+            "pt": "PT",
+            "sv": "SE",
         }
         return filename.format(language=language, country=countries[language])
