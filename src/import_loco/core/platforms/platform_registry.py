@@ -5,6 +5,7 @@ from import_loco.core.exceptions import LocoConfigError
 from import_loco.core.platforms.platform import Platform
 from import_loco.core.platforms.apple.ios_platform import IOSPlatform
 from import_loco.core.platforms.apple.macos_platform import MacOSPlatform
+from import_loco.core.platforms.qt_platform import QtPlatform
 from import_loco.core.platforms.windows import WindowsPlatform
 
 logger = logging.getLogger(__name__)
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 _PLATFORM_REGISTRY: Dict[str, Type[Platform]] = {
     "ios": IOSPlatform,
     "macos": MacOSPlatform,
+    "qt": QtPlatform,
     "windows": WindowsPlatform,
 }
 
