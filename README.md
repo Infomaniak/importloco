@@ -60,6 +60,7 @@ import_loco -v                      # Verbose mode for the curious
 |----------|--------------------------------------------------------------|------------------------|--------------------------------|
 | iOS      | `strings`, `stringsdict`, `infoplist`, `main_target_strings` | .strings, .stringsdict | `en.lproj/Localizable.strings` |
 | macOS    | `strings`, `stringsdict`                                     | .strings, .stringsdict | `en.lproj/Localizable.strings` |
+| Qt       | `ts`                                                         | .ts (XML)              | `client_fr.ts`                 |
 | Windows  | `resx`                                                       | .resx                  | `Resources.en.resx`            |
 
 ## Configuration example
@@ -78,7 +79,7 @@ filters: [ common ]  # Optional for additional Loco tag filters
 
 | Option                         | Required | Description                                               |
 |--------------------------------|----------|-----------------------------------------------------------|
-| `platform`                     | Yes      | `ios`, `macos`, or `windows`                              |
+| `platform`                     | Yes      | `ios`, `macos`, `qt`, or `windows`                        |
 | `localizable_path`             | Yes      | Path to your localization files                           |
 | `main_target_localizable_path` | No       | iOS only: path for InfoPlist.strings                      |
 | `languages`                    | No       | List of language codes (defaults to `de, en, es, fr, it`) |
