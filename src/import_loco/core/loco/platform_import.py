@@ -83,6 +83,7 @@ def _extract_archive(archive_path: str) -> str:
 
 
 def _move_files_to_destination(platform: Platform, folder: str, resource_type: str) -> None:
+    platform.prepare_import(folder)
     languages = platform.get_supported_languages()
 
     for language in languages:

@@ -67,6 +67,12 @@ class Platform(ABC):
         file_path = self._format_destination_path(language, config.destination_filename)
         return f"{base_path}/{file_path}"
 
+    def prepare_import(self, folder: str) -> None:
+        """Called before moving files, with the path of the extracted archive folder.
+
+        Override in subclasses to derive runtime context from the archive structure.
+        """
+
     def should_import_resource(self, resource_type: str) -> bool:
         config = self._get_resource_config(resource_type)
         return self.config.get(config.config_key, "") != ""
