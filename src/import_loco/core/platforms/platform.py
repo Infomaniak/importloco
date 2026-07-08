@@ -73,6 +73,13 @@ class Platform(ABC):
         Override in subclasses to derive runtime context from the archive structure.
         """
 
+    def post_process(self, destination_path: str, language: str) -> None:
+        """Called after a resource file has been copied to its destination.
+
+        Override in subclasses to normalize or transform the written file in place.
+        No-op by default.
+        """
+
     def should_import_resource(self, resource_type: str) -> bool:
         config = self._get_resource_config(resource_type)
         return self.config.get(config.config_key, "") != ""

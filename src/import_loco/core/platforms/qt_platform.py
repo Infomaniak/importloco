@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 
 from import_loco.core.parsers.qt_ts_parser import QtTsTranslationsParser
 from import_loco.core.platforms.platform import Platform
+from import_loco.core.normalizers.qt_normalizer import normalize_file
 from import_loco.core.platforms.resource_type_config import ResourceTypeConfig
 
 logger = logging.getLogger(__name__)
@@ -52,6 +53,12 @@ class QtPlatform(Platform):
             logger.debug("Detected Loco project name from archive: %s", self._loco_project_name)
         else:
             logger.warning("No .ts files found in archive translations folder")
+
+    def post_process(self, destination_path: str, language: str) -> None:
+        # Loco's Qt exporter emits Apple/printf placeholders (%@, %lld) and
+        # SwiftUI markdown; rewrite them into Qt form (%1, %n, <b>) so the .ts
+        # is usable at runtime.
+        normalize_file(destination_path)
 
     def _format_source_path(self, language: str, filename: str) -> str:
         return f"translations/{self._loco_project_name}_{language}.ts"
