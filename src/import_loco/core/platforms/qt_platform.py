@@ -3,6 +3,7 @@ import logging
 import os
 from typing import Any, Dict, List
 
+from import_loco.core.exceptions import LocoParserError
 from import_loco.core.parsers.qt_ts_parser import QtTsTranslationsParser
 from import_loco.core.platforms.platform import Platform
 from import_loco.core.normalizers.qt_normalizer import normalize_file
@@ -47,12 +48,15 @@ class QtPlatform(Platform):
         # We scan the archive to discover that prefix instead of requiring it in
         # the config, so the platform works for any Loco project out of the box.
         matches = glob.glob(os.path.join(folder, "translations", "*_*.ts"))
-        if matches:
-            basename = os.path.basename(matches[0])               # e.g. "kdrive-desktop_fr.ts"
-            self._loco_project_name = basename.rsplit("_", 1)[0]  # "kdrive-desktop"
-            logger.debug("Detected Loco project name from archive: %s", self._loco_project_name)
-        else:
-            logger.warning("No .ts files found in archive translations folder")
+        if not matches:
+            raise LocoParserError(
+                f"No 'translations/*_*.ts' files found in archive folder '{folder}'. "
+                "The Loco archive may be empty or use an unexpected layout."
+            )
+
+        basename = os.path.basename(matches[0])               # e.g. "kdrive-desktop_fr.ts"
+        self._loco_project_name = basename.rsplit("_", 1)[0]  # "kdrive-desktop"
+        logger.debug("Detected Loco project name from archive: %s", self._loco_project_name)
 
     def post_process(self, destination_path: str, language: str) -> None:
         # Loco's Qt exporter emits Apple/printf placeholders (%@, %lld) and

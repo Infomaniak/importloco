@@ -36,8 +36,6 @@ class QtTsTranslationsParser(TranslationsParser):
                     if translation_type in ("unfinished", "vanished"):
                         continue
 
-                    translation = translation_el.text or ""
-
                     # Prefer the XLIFF-style ``id`` attribute as key; fall back
                     # to ``context_name.source_text`` for classic Qt .ts files.
                     message_id = message.get("id")
@@ -47,7 +45,16 @@ class QtTsTranslationsParser(TranslationsParser):
                         source_text = message.findtext("source") or ""
                         key = f"{context_name}.{source_text}" if context_name else source_text
 
-                    data[key] = translation
+                    # Plural messages stok et core each form in a separate
+                    # ``<numerusform>`` child; ``translation_el.text`` would only
+                    # capture the whitespace before the first child, so emit one
+                    # entry per plural form (e.g. ``key[0]``, ``key[1]``).
+                    numerus_forms = translation_el.findall("numerusform")
+                    if numerus_forms:
+                        for index, form in enumerate(numerus_forms):
+                            data[f"{key}-{index}"] = (form.text or "").strip()
+                    else:
+                        data[key] = (translation_el.text or "").strip()
 
             logger.debug("Successfully parsed %d translations from %s", len(data), filename)
             return data
