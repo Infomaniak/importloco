@@ -66,8 +66,8 @@ import_loco -v                      # Verbose mode for the curious
 ### Qt normalization
 
 Loco's Qt exporter emits Apple/printf-style placeholders and SwiftUI Markdown, which Qt doesn't understand at
-runtime. When importing `.ts` files, `import_loco` rewrites the text of every `<source>`, `<translation>`, and
-`<numerusform>` in place:
+runtime, and names each `<context>` after the string's group. When importing `.ts` files, `import_loco`
+rewrites the text of every `<source>`, `<translation>`, and `<numerusform>` in place:
 
 | From (Loco)                    | To (Qt)                            |
 |--------------------------------|------------------------------------|
@@ -75,6 +75,9 @@ runtime. When importing `.ts` files, `import_loco` rewrites the text of every `<
 | positional `%1$s`, `%2$@`      | `%1`, `%2` (index preserved)       |
 | integer specifier in a plural  | `%n` (Qt's count token)            |
 | `**bold**`                     | `<b>bold</b>`                      |
+
+It also **empties every `<context>` name**: the export is id-based and looked up at runtime with
+`qtTrId`/`qsTrId`, which only query the empty context, so a named context would make those ids unreachable.
 
 Numbering restarts per element, so a message's source and every translation stay consistent. `<extracomment>`
 context notes are left untouched (Qt's `lrelease` strips them from the compiled `.qm`).

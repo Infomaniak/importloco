@@ -16,6 +16,14 @@ This module rewrites, in place, the text of every ``<source>``,
 Numbering restarts at each element, which keeps the source and every
 translation of the same message consistent: Apple ``%@`` ordering is by
 appearance, so numbering by appearance matches the original semantics.
+
+It also **empties every ``<context>`` name**. The export is id-based (each
+``<message>`` carries an ``id``) and is meant to be looked up at runtime with
+``qtTrId``/``qsTrId``, which only ever query the *empty* context. Loco writes each
+string's category into the ``<context>`` name (``main``, ``Settings``, ``Description
+for … error`` …), which would scatter the ids across named contexts and make them
+unreachable; blanking the name files every message under the empty context, keyed
+by its id alone.
 """
 
 import logging
@@ -44,6 +52,11 @@ _INT_CONV = frozenset("diuxX")
 # SwiftUI bold. Text content is XML-escaped, so we inject escaped angle brackets
 # to keep the .ts valid; lrelease decodes them back to <b>…</b> in the .qm.
 _BOLD_RE = re.compile(r"\*\*(.+?)\*\*", re.S)
+
+# Loco stores each string's category as the <context> name, but qtTrId/qsTrId only look up the
+# empty context. Blanking every name keys each message by its id alone. (<name> only ever appears
+# as a context name in a .ts, so a document-wide sub is safe.)
+_CONTEXT_NAME_RE = re.compile(r"(<name>)[^<]*(</name>)")
 
 _MESSAGE_RE = re.compile(r"<message\b.*?</message>", re.S)
 _SOURCE_RE = re.compile(r"(<source>)(.*?)(</source>)", re.S)
@@ -101,7 +114,9 @@ def _normalize_message(block: str) -> str:
 
 
 def normalize(content: str) -> str:
-    """Return *content* (a Qt ``.ts`` document) with placeholders and Markdown converted."""
+    """Return *content* (a Qt ``.ts`` document) with contexts, placeholders and Markdown converted."""
+    # Blank Loco's category names so every id resolves via qtTrId's empty-context lookup.
+    content = _CONTEXT_NAME_RE.sub(r"\1\2", content)
     return _MESSAGE_RE.sub(lambda m: _normalize_message(m.group(0)), content)
 
 
