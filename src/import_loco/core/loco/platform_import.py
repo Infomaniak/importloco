@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import zipfile
+from typing import List, Optional
 
 from import_loco.core.exceptions import LocoParserError, LocoNetworkError
 from import_loco.core.loco.loco_network import fetch_archive, fetch_tags
@@ -11,7 +12,7 @@ from import_loco.core.platforms.platform import Platform
 logger = logging.getLogger(__name__)
 
 
-def import_translations(platform: Platform, resource_type: str) -> None:
+def import_translations(platform: Platform, resource_type: str, keys: Optional[List[str]] = None) -> None:
     if resource_type not in platform.get_resource_types():
         raise ValueError(f"Resource type '{resource_type}' not supported by platform")
 
@@ -23,7 +24,7 @@ def import_translations(platform: Platform, resource_type: str) -> None:
     folder_with_strings = _extract_archive(archive_path)
     print("(2/3) Archive extracted.")
 
-    _move_files_to_destination(platform, folder_with_strings, resource_type)
+    _move_files_to_destination(platform, folder_with_strings, resource_type, keys)
     print("(3/3) Resources updated.\n")
 
 
@@ -82,7 +83,7 @@ def _extract_archive(archive_path: str) -> str:
     return folder_path
 
 
-def _move_files_to_destination(platform: Platform, folder: str, resource_type: str) -> None:
+def _move_files_to_destination(platform: Platform, folder: str, resource_type: str, keys: Optional[List[str]] = None) -> None:
     platform.prepare_import(folder)
     languages = platform.get_supported_languages()
 
@@ -97,8 +98,13 @@ def _move_files_to_destination(platform: Platform, folder: str, resource_type: s
 
         source_path = os.path.join(folder, source_file)
         try:
-            shutil.copy2(source_path, destination_path)
-            logger.debug("Copied %s to %s", source_path, destination_path)
+            if keys:
+                parser = platform.get_parser_for_resource_type(resource_type)
+                parser.filter_and_write(source_path, destination_path, keys)
+                logger.debug("Filtered and wrote %s to %s", source_path, destination_path)
+            else:
+                shutil.copy2(source_path, destination_path)
+                logger.debug("Copied %s to %s", source_path, destination_path)
             platform.post_process(destination_path, language)
         except FileNotFoundError as exc:
             raise LocoParserError(

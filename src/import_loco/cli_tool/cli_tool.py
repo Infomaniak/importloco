@@ -39,7 +39,8 @@ def run_tool() -> None:
             for resource_type in resources_to_import:
                 if not platform.should_import_resource(resource_type):
                     continue
-                import_translations(platform, resource_type)
+                keys = arguments.key if arguments.key else None
+                import_translations(platform, resource_type, keys)
 
         files_are_valid = validate_strings(platform)
         if arguments.check and not files_are_valid:
