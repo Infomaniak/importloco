@@ -1,12 +1,12 @@
 # Import Loco
 
 Your friendly neighborhood localization importer! A modern Python CLI tool that fetches your localized strings
-from [Loco](https://localise.biz/) and drops them right into your iOS, macOS, or Windows project. No fuss, no muss.
+from [Loco](https://localise.biz/) and drops them right into your iOS, macOS, Qt, or Windows project. No fuss, no muss.
 
 ## What's in the Box?
 
-- **Multi-Platform Love**: iOS, macOS, and Windows are all invited to the party
-- **All the Formats**: `.strings`, `.stringsdict`, and `.resx` — we speak your language(s)
+- **Multi-Platform Love**: iOS, macOS, Qt, and Windows are all invited to the party
+- **All the Formats**: `.strings`, `.stringsdict`, `.ts`, and `.resx` — we speak your language(s)
 - **Validation Superpowers**: Catches typos, wrong punctuation, and those sneaky straight apostrophes before they reach production
 - **YAML Config**: Because life's too short for INI files
 - **Secure by Default**: API keys stay safe in env vars or separate files
@@ -60,7 +60,27 @@ import_loco -v                      # Verbose mode for the curious
 |----------|--------------------------------------------------------------|------------------------|--------------------------------|
 | iOS      | `strings`, `stringsdict`, `infoplist`, `main_target_strings` | .strings, .stringsdict | `en.lproj/Localizable.strings` |
 | macOS    | `strings`, `stringsdict`                                     | .strings, .stringsdict | `en.lproj/Localizable.strings` |
+| Qt       | `ts`                                                         | .ts (XML)              | `client_fr.ts`                 |
 | Windows  | `resx`                                                       | .resx                  | `Resources.en.resx`            |
+
+### Qt normalization
+
+Loco's Qt exporter emits Apple/printf-style placeholders and SwiftUI Markdown, which Qt doesn't understand at
+runtime, and names each `<context>` after the string's group. When importing `.ts` files, `import_loco`
+rewrites the text of every `<source>`, `<translation>`, and `<numerusform>` in place:
+
+| From (Loco)                    | To (Qt)                            |
+|--------------------------------|------------------------------------|
+| `%@`, `%lld`, `%d`, …          | `%1`, `%2`, … (numbered in order)  |
+| positional `%1$s`, `%2$@`      | `%1`, `%2` (index preserved)       |
+| integer specifier in a plural  | `%n` (Qt's count token)            |
+| `**bold**`                     | `<b>bold</b>`                      |
+
+It also **empties every `<context>` name**: the export is id-based and looked up at runtime with
+`qtTrId`/`qsTrId`, which only query the empty context, so a named context would make those ids unreachable.
+
+Numbering restarts per element, so a message's source and every translation stay consistent. `<extracomment>`
+context notes are left untouched (Qt's `lrelease` strips them from the compiled `.qm`).
 
 ## Configuration example
 
@@ -78,7 +98,7 @@ filters: [ common ]  # Optional for additional Loco tag filters
 
 | Option                         | Required | Description                                               |
 |--------------------------------|----------|-----------------------------------------------------------|
-| `platform`                     | Yes      | `ios`, `macos`, or `windows`                              |
+| `platform`                     | Yes      | `ios`, `macos`, `qt`, or `windows`                        |
 | `localizable_path`             | Yes      | Path to your localization files                           |
 | `main_target_localizable_path` | No       | iOS only: path for InfoPlist.strings                      |
 | `languages`                    | No       | List of language codes (defaults to `de, en, es, fr, it`) |
@@ -130,7 +150,7 @@ pdm run ruff check
 → Set `LOCO_API_KEY` env var or create `.import_loco_api` file
 
 **"Unsupported platform"**
-→ Use `ios`, `macos`, or `windows`
+→ Use `ios`, `macos`, `qt`, or `windows`
 
 **"Resource type not supported"**
 → Check the platform table above for valid resource types

@@ -83,6 +83,7 @@ def _extract_archive(archive_path: str) -> str:
 
 
 def _move_files_to_destination(platform: Platform, folder: str, resource_type: str) -> None:
+    platform.prepare_import(folder)
     languages = platform.get_supported_languages()
 
     for language in languages:
@@ -98,6 +99,7 @@ def _move_files_to_destination(platform: Platform, folder: str, resource_type: s
         try:
             shutil.copy2(source_path, destination_path)
             logger.debug("Copied %s to %s", source_path, destination_path)
+            platform.post_process(destination_path, language)
         except FileNotFoundError as exc:
             raise LocoParserError(
                 f"Missing source translation file for language '{language}' at '{source_path}'. "
