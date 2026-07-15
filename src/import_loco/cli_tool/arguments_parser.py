@@ -14,6 +14,12 @@ def _add_parser_arguments(parser: argparse.ArgumentParser) -> None:
         help="Run a complete check over the project's strings",
     )
     parser.add_argument(
+        "-k",
+        "--key",
+        nargs="+",
+        help="Import only the specified string keys",
+    )
+    parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
