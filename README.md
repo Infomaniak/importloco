@@ -79,6 +79,10 @@ rewrites the text of every `<source>`, `<translation>`, and `<numerusform>` in p
 It also **empties every `<context>` name**: the export is id-based and looked up at runtime with
 `qtTrId`/`qsTrId`, which only query the empty context, so a named context would make those ids unreachable.
 
+It also **sets the missing `language` attribute** of the `<TS>` root to its `sourcelanguage`: Loco omits it
+for the source locale only, and without it `lrelease` keeps a single plural form, so a plural message always
+shows its singular text.
+
 Numbering restarts per element, so a message's source and every translation stay consistent. `<extracomment>`
 context notes are left untouched (Qt's `lrelease` strips them from the compiled `.qm`).
 
