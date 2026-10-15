@@ -24,6 +24,12 @@ string's category into the ``<context>`` name (``main``, ``Settings``, ``Descrip
 for … error`` …), which would scatter the ids across named contexts and make them
 unreachable; blanking the name files every message under the empty context, keyed
 by its id alone.
+
+Finally, it **sets the missing ``language`` attribute** of the ``<TS>`` root. Loco
+omits it when the exported locale is the source locale, so the source catalog
+(``en``) has none. Without it, lrelease falls back to the plural rules of a
+language with a single form and drops every plural form but the first. Loco only
+omits it in that case, so the source language is the right value.
 """
 
 import logging
@@ -57,6 +63,11 @@ _BOLD_RE = re.compile(r"\*\*(.+?)\*\*", re.S)
 # empty context. Blanking every name keys each message by its id alone. (<name> only ever appears
 # as a context name in a .ts, so a document-wide sub is safe.)
 _CONTEXT_NAME_RE = re.compile(r"(<name>)[^<]*(</name>)")
+
+# Loco omits ``language`` on the <TS> root of the source locale's export; lrelease then keeps a single plural form.
+_TS_TAG_RE = re.compile(r"<TS\b[^>]*>")
+_SOURCE_LANGUAGE_RE = re.compile(r'\bsourcelanguage="([^"]+)"')
+_LANGUAGE_RE = re.compile(r'\slanguage="')
 
 _MESSAGE_RE = re.compile(r"<message\b.*?</message>", re.S)
 _SOURCE_RE = re.compile(r"(<source>)(.*?)(</source>)", re.S)
@@ -113,8 +124,19 @@ def _normalize_message(block: str) -> str:
     return block
 
 
+def _set_missing_language(ts_tag: str) -> str:
+    if _LANGUAGE_RE.search(ts_tag):
+        return ts_tag
+    source_language = _SOURCE_LANGUAGE_RE.search(ts_tag)
+    if source_language is None:
+        logger.warning("Qt catalog has neither language nor sourcelanguage: %s", ts_tag)
+        return ts_tag
+    return ts_tag[:-1] + ' language="%s">' % source_language.group(1)
+
+
 def normalize(content: str) -> str:
-    """Return *content* (a Qt ``.ts`` document) with contexts, placeholders and Markdown converted."""
+    """Return *content* (a Qt ``.ts`` document) with its language set and contexts, placeholders and Markdown converted."""
+    content = _TS_TAG_RE.sub(lambda m: _set_missing_language(m.group(0)), content, count=1)
     # Blank Loco's category names so every id resolves via qtTrId's empty-context lookup.
     content = _CONTEXT_NAME_RE.sub(r"\1\2", content)
     return _MESSAGE_RE.sub(lambda m: _normalize_message(m.group(0)), content)
@@ -131,4 +153,4 @@ def normalize_file(path: str) -> None:
 
     with open(path, "w", encoding="utf-8") as handle:
         handle.write(converted)
-    logger.debug("Normalized Qt placeholders and markdown in %s", path)
+    logger.debug("Normalized Qt language, placeholders and markdown in %s", path)
