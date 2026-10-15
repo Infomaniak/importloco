@@ -131,7 +131,9 @@ def _set_missing_language(ts_tag: str) -> str:
     if source_language is None:
         logger.warning("Qt catalog has neither language nor sourcelanguage: %s", ts_tag)
         return ts_tag
-    return ts_tag[:-1] + ' language="%s">' % source_language.group(1)
+    # Inserted after sourcelanguage, so the closing delimiter (">" or "/>") is left untouched.
+    end = source_language.end()
+    return ts_tag[:end] + ' language="%s"' % source_language.group(1) + ts_tag[end:]
 
 
 def normalize(content: str) -> str:
